@@ -1,9 +1,6 @@
 coverage/
-doc/
 src/
 test/
-gulpfile.js
-jsdoc.json
 karma.config.js
 .editorconfig
 .eslintrc
@@ -13,3 +10,9 @@ karma.config.js
 API.md
 circle.yml
 yarn*
+example/
+node_modules/
+.babelrc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

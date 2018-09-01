@@ -40,12 +40,12 @@ DeckGLLayer.mergeOptions(options);
 
 export class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
 
-    draw() { 
+    draw() {
         super.draw();
         this.renderScene();
     }
 
-    drawOnInteracting() { 
+    drawOnInteracting() {
         super.drawOnInteracting();
         this.renderScene();
     }
