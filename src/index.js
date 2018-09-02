@@ -1,98 +1,156 @@
 import * as maptalks from 'maptalks';
-import { LayerManager, PerspectiveViewport } from 'deck.gl';
+import { LayerManager, PerspectiveView, MapView } from 'deck.gl'; // eslint-disable-line
+import { createContext } from './helper';
 
-const options = {
-    'renderer' : 'webgl',
+const retina = maptalks.Browser.retina ? 2 : 1;
+
+const _options = {
+    'renderer' : 'gl',
     'doubleBuffer' : true,
     'glOptions' : null
 };
 
 const RADIAN = Math.PI / 180;
 
-/**
- * A Layer to render with DECK.GL (https://github.com/uber/deck.gl), a WebGL data visualization lib. <br>
- *
- * @classdesc
- * A layer to render with DECK.GL
- * @example
- *  var layer = new maptalks.DeckGLLayer('deck');
- *
- *  layer.prepareToDraw = function (gl, scene, camera) {
- *      var size = map.getSize();
- *      return [size.width, size.height]
- *  };
- *
- *  layer.draw = function (gl, scene, camera, width, height) {
- *      //...
- *  };
- *  layer.addTo(map);
- * @class
- * @category layer
- * @extends {maptalks.CanvasLayer}
- * @param {String|Number} id - layer's id
- * @param {Object} options - options defined in [options]{@link maptalks.ThreeLayer#options}
- */
-export class DeckGLLayer extends maptalks.CanvasLayer {
+class DeckGLLayer extends maptalks.CanvasLayer {
+    static getTargetZoom(map) {
+        return map.getMaxNativeZoom();
+    }
 
+    constructor(id, props, options = {}) {
+        super(id, Object.assign(_options, options));
+        this.props = props;
+    }
+
+    prepareToDraw() {}
+
+    /**
+     * Draw method of ThreeLayer
+     * In default, it calls renderScene, refresh the camera and the scene
+     */
+    draw() {
+        this.renderScene();
+    }
+
+    /**
+     * Draw method of ThreeLayer when map is interacting
+     * In default, it calls renderScene, refresh the camera and the scene
+     */
+    drawOnInteracting() {
+        this.renderScene();
+    }
+
+    /**
+     * coordinates to vector
+     * @param coordinate
+     * @returns {null}
+     */
+    coordinateToVector3(coordinate) {
+        const map = this.getMap();
+        if (!map) {
+            return null;
+        }
+        const p = map.coordinateToPoint(coordinate, DeckGLLayer.getTargetZoom(map));
+        return p;
+    }
+
+    lookAt(vector) {
+        const renderer = this._getRenderer();
+        if (renderer) {
+            renderer.context.lookAt(vector);
+        }
+        return this;
+    }
+
+    getCamera() {
+        const renderer = this._getRenderer();
+        if (renderer) {
+            return renderer.camera;
+        }
+        return null;
+    }
+
+    getScene() {
+        const renderer = this._getRenderer();
+        if (renderer) {
+            return renderer.scene;
+        }
+        return null;
+    }
+
+    renderScene() {
+        const renderer = this._getRenderer();
+        if (renderer) {
+            return renderer.renderScene();
+        }
+        return this;
+    }
+
+    _getFovRatio() {
+        const map = this.getMap();
+        const fov = map.getFov();
+        return Math.tan(fov / 2 * RADIAN);
+    }
 }
 
-DeckGLLayer.mergeOptions(options);
+class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
 
-export class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
-
-    draw() {
-        super.draw();
+    _drawLayer() {
+        super._drawLayer.apply(this, arguments);
         this.renderScene();
     }
 
-    drawOnInteracting() {
-        super.drawOnInteracting();
-        this.renderScene();
-    }
-
-    getPrepareParams() {
-        return [this.layerManager];
-    }
-
-    getDrawParams() {
-        return [this.layerManager];
+    hitDetect() {
+        return false;
     }
 
     createCanvas() {
-        if (this.canvas) {
-            return;
-        }
-
-        const map = this.getMap();
-        const size = map.getSize();
-        const r = maptalks.Browser.retina ? 2 : 1;
-        this.canvas = maptalks.Canvas.createCanvas(r * size['width'], r * size['height'], map.CanvasClass);
-        const gl = this.gl = this._createGLContext(this.canvas, this.layer.options['glOptions']);
-        gl.clearColor(0.0, 0.0, 0.0, 0.0);
-        if (this.onCanvasCreate) {
+        if (!this.canvas) {
+            const map = this.getMap();
+            const size = map.getSize();
+            const [width, height] = [retina * size['width'], retina * size['height']];
+            if (this.layer._canvas) {
+                const canvas = this.layer._canvas;
+                canvas.width = width;
+                canvas.height = height;
+                if (canvas.style) {
+                    canvas.style.width = width + 'px';
+                    canvas.style.height = height + 'px';
+                }
+                this.canvas = this.layer._canvas;
+            } else {
+                this.canvas = maptalks.Canvas.createCanvas(width, height, map.CanvasClass);
+                const gl = this.gl = createContext(this.canvas, this.layer.options['glOptions']);
+                gl.clearColor(0.0, 0.0, 0.0, 0.0);
+                // this.context = this.gl;
+            }
             this.onCanvasCreate();
-        }
 
-        if (this.layer.options['doubleBuffer']) {
-            this.buffer = maptalks.Canvas.createCanvas(this.canvas.width, this.canvas.height, map.CanvasClass);
-            this.context = this.buffer.getContext('2d');
+            if (this.layer.options['doubleBuffer']) {
+                this.buffer = maptalks.Canvas.createCanvas(this.canvas.width, this.canvas.height, map.CanvasClass);
+                this.context = this.buffer.getContext('2d');
+            }
+
+            this.layer.fire('canvascreate', {
+                'context' : this.context,
+                'gl' : this.gl
+            });
         }
+        return this.canvas;
     }
+
+    // onCanvasCreate() {
+    //     super.onCanvasCreate();
+    //     this.layer.onCanvasCreate(this.context, this.scene, this.camera);
+    // }
 
     resizeCanvas(canvasSize) {
         if (!this.canvas) {
             return;
         }
-        let size;
-        if (!canvasSize) {
-            size = this.getMap().getSize();
-        } else {
-            size = canvasSize;
-        }
-        const r = maptalks.Browser.retina ? 2 : 1;
-        //retina support
-        this.canvas.height = r * size['height'];
-        this.canvas.width = r * size['width'];
+        const size = canvasSize ? canvasSize : this.getMap().getSize();
+        this.canvas.height = retina * size['height'];
+        this.canvas.width = retina * size['width'];
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     }
 
@@ -108,7 +166,6 @@ export class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
 
     prepareCanvas() {
         if (this.context) {
-            // the layer is double buffered, clip the canvas with layer's mask.
             return super.prepareCanvas();
         }
         if (!this.canvas) {
@@ -120,14 +177,87 @@ export class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
         return null;
     }
 
-    getTargetZoom(map) {
-        return map.getMaxNativeZoom() / 2;
+    // renderScene() {
+    //     this._locateCamera();
+    //     const { layers } = this.layer.props;
+    //     const map = this.getMap();
+    //     const size = map.getSize();
+    //     const [width, height] = [retina * size['width'], retina * size['height']];
+    //     const _props = {
+    //         width: width, // Number, required
+    //         height: height,
+    //         canvas: this.canvas,
+    //         layers: layers,
+    //         // gl: this.gl,
+    //         _customRender: true,
+    //         initialViewState: this._getViewState()
+    //     };
+    //     if (!this.deckLayer) {
+    //         this.deckLayer = new deck.Deck(_props); // eslint-disable-line
+    //     } else {
+    //         this.deckLayer.setProps(Object.assign({
+    //             viewState: _props.initialViewState
+    //         }, _props));
+    //     }
+    //     this.completeRender();
+    // }
+
+    remove() {
+        delete this._drawContext;
+        super.remove();
+    }
+
+    _getViewState() {
+        const map = this.getMap();
+        const zoom = map.getGLZoom();
+        const maxZoom = DeckGLLayer.getTargetZoom(map);
+        const center = map.getCenter();
+        const pitch = map.getPitch();
+        const bearing = map.getBearing();
+        return {
+            latitude: center['y'],
+            longitude: center['x'],
+            zoom: zoom,
+            bearing: bearing,
+            pitch: pitch,
+            maxZoom: maxZoom
+        }
+    }
+
+    _locateCamera() {
+        // const map = this.getMap();
+        // const size = map.getSize();
+        // const scale = map.getScale();
+        // const camera = this.camera;
+        // // 1. camera is always looking at map's center
+        // // 2. camera's distance from map's center doesn't change when rotating and tilting.
+        // const center2D = map.coordinateToPoint(map.getCenter(), getTargetZoom(map));
+        // const pitch = map.getPitch() * RADIAN;
+        // const bearing = map.getBearing() * RADIAN;
+        //
+        // const ratio = this.layer._getFovRatio();
+        // const z = -scale * size.height / 2 / ratio;
+        //
+        // // when map tilts, camera's position should be lower in Z axis
+        // camera.position.z = z * Math.cos(pitch);
+        // // and [dist] away from map's center on XY plane to tilt the scene.
+        // const dist = Math.sin(pitch) * z;
+        // // when map rotates, the camera's xy position is rotating with the given bearing and still keeps [dist] away from map's center
+        // camera.position.x = center2D.x + dist * Math.sin(bearing);
+        // camera.position.y = center2D.y - dist * Math.cos(bearing);
+        //
+        // // when map rotates, camera's up axis is pointing to south direction of map
+        // camera.up.set(Math.sin(bearing), -Math.cos(bearing), 0);
+        //
+        // // look at to the center of map
+        // camera.lookAt(new THREE.Vector3(center2D.x, center2D.y, 0));
+        // camera.updateProjectionMatrix();
     }
 
     _getLookAtMat() {
         const map = this.getMap();
 
-        const targetZ = this.getTargetZoom(map);
+        const targetZ = DeckGLLayer.getTargetZoom(map);
 
         const size = map.getSize(),
             scale = map.getScale() / map.getScale(targetZ);
@@ -136,7 +266,7 @@ export class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
         const pitch = map.getPitch() * RADIAN;
         const bearing = -map.getBearing() * RADIAN;
 
-        const ratio = this._getFovRatio();
+        const ratio = this.layer._getFovRatio();
         const z = scale * size.height / 2 / ratio;
         const cz = z * Math.cos(pitch);
         // and [dist] away from map's center on XY plane to tilt the scene.
@@ -158,27 +288,39 @@ export class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
         };
     }
 
-
     onCanvasCreate() {
         const _viewParams = this._getLookAtMat();
-        const viewport = new PerspectiveViewport(_viewParams);
-        const layerManager = new LayerManager({ gl:this.gl });
-        layerManager.setViewport(viewport);
+        const viewport = new PerspectiveView(_viewParams);
+        const layerManager = new LayerManager(this.gl, {});
+        layerManager.setViews(viewport);
         this.layerManager = layerManager;
     }
 
-    onRemove() {
-
+    renderScene() {
+        // const { layers } = this.layer.props;
+        const _viewParams = this._getLookAtMat();
+        const viewport = new PerspectiveView(_viewParams);
+        this.layerManager.setViews(viewport);
+        this.setProps({
+            width: this.canvas.width,
+            height: this.canvas.height
+        });
+        this.completeRender();
     }
 
-    renderScene() {
-        const _viewParams = this._getLookAtMat();
-        const viewport = new PerspectiveViewport(_viewParams);
-        this.layerManager.setViewport(viewport);
-        this.layerManager.updateLayers();
-        this.completeRender();
+    setProps(props) {
+        props = Object.assign({}, this.layer.props, props);
+        // Update layer manager props (but not size)
+        if (this.layerManager) {
+            this.layerManager.setProps(props);
+        }
     }
 }
 
 DeckGLLayer.registerRenderer('canvas', DeckGLRenderer);
-DeckGLLayer.registerRenderer('webgl', DeckGLRenderer);
+DeckGLLayer.registerRenderer('gl', DeckGLRenderer);
+
+export {
+    DeckGLLayer,
+    DeckGLRenderer
+}

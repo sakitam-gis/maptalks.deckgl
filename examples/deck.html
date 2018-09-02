@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>gl</title>
+    <style type="text/css">
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<canvas id="map"></canvas>
+<script src="../node_modules/deck.gl/deckgl.min.js"></script>
+<script>
+    const cn = document.getElementById('map');
+    const gl = cn.getContext('webgl2');
+    const LIGHT_SETTINGS = {
+        lightsPosition: [-74.05, 40.7, 8000, -73.5, 41, 5000],
+        ambientRatio: 0.05,
+        diffuseRatio: 0.6,
+        specularRatio: 0.8,
+        lightsStrength: [2.0, 0.0, 0.0, 0.0],
+        numberOfLights: 2
+    };
+
+    const INITIAL_VIEW_STATE = {
+        longitude: -74,
+        latitude: 40.72,
+        zoom: 13,
+        maxZoom: 16,
+        pitch: 45,
+        bearing: 0
+    };
+
+    // Source data CSV
+    const DATA_URL = {
+        BUILDINGS:
+            'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/buildings.json', // eslint-disable-line
+        TRIPS:
+            'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/trips.json' // eslint-disable-line
+    };
+
+    const props = {
+        initialViewState: INITIAL_VIEW_STATE,
+        gl: gl,
+        onViewportChange: onViewportChange,
+        layers: render(),
+        _customRender: true
+        // controller: true,
+        // viewState: {}
+    };
+
+    const deckgl = new deck.Deck(props);
+    function onViewportChange(viewport) {
+        deckgl.setProps({viewState: viewport});
+    }
+
+    document.onkeydown = function (event) {
+        console.log(event)
+        if (event.keyCode === 107) { // +
+            console.log(deckgl);
+            deckgl.setProps(Object.assign({
+                viewState: {
+                    longitude: -74,
+                    latitude: 40.72,
+                    maxZoom: 16,
+                    pitch: 45,
+                    bearing: 0,
+                    zoom: deckgl.getViewports()[0].zoom + 1
+                }
+            }, props))
+        } else if (event.keyCode === 109) { // -
+            console.log(deckgl);
+            deckgl.setProps(Object.assign({
+                viewState: {
+                    longitude: -74,
+                    latitude: 40.72,
+                    maxZoom: 16,
+                    pitch: 45,
+                    bearing: 0,
+                    zoom: deckgl.getViewports()[0].zoom - 1
+                }
+            }, props))
+        }
+    };
+
+    function render () {
+        return [
+            // new deck.i.TripsLayer({
+            //     id: 'trips',
+            //     data: DATA_URL.TRIPS,
+            //     getPath: d => d.segments,
+            //     getColor: d => (d.vendor === 0 ? [253, 128, 93] : [23, 184, 190]),
+            //     opacity: 0.3,
+            //     strokeWidth: 2,
+            //     trailLength: 180,
+            //     currentTime: 0
+            // }),
+            new deck.PolygonLayer({
+                id: 'buildings',
+                data: DATA_URL.BUILDINGS,
+                extruded: true,
+                wireframe: false,
+                fp64: true,
+                opacity: 0.5,
+                getPolygon: f => f.polygon,
+                getElevation: f => f.height,
+                getFillColor: [74, 80, 87],
+                lightSettings: LIGHT_SETTINGS
+            })
+        ];
+    }
+</script>
+</body>
+</html>

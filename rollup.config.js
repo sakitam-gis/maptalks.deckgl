@@ -45,9 +45,7 @@ const plugins = [
         formatter: friendlyFormatter,
         exclude: [resolve('node_modules')]
     }),
-    babel({
-        exclude: 'node_modules/**' // only transpile our source code
-    }),
+    babel(),
     nodeResolve({
         jsnext: true,
         main: true,

@@ -1,7 +1,7 @@
 {
   "name": "maptalks.deckgl",
   "version": "0.0.1",
-  "author": "sakitam-fdd <smilefdd@gmail.com>",
+  "author": "https://twitter.com/fuzhenn",
   "homepage": "https://github.com/sakitam-gis/maptalks.deckgl",
   "description": "A maptalks Layer to render with deck.gl.",
   "repository": {
