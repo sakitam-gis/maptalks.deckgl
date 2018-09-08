@@ -1,6 +1,7 @@
 import * as maptalks from 'maptalks';
-import { LayerManager, PerspectiveView, MapView } from 'deck.gl'; // eslint-disable-line
-import { createContext } from './helper';
+import { Deck } from '@deck.gl/core'; // eslint-disable-line
+import { GeoJsonLayer } from '@deck.gl/layers';
+import { createContext, createCanvas } from './helper';
 
 const retina = maptalks.Browser.retina ? 2 : 1;
 
@@ -10,7 +11,7 @@ const _options = {
     'glOptions' : null
 };
 
-const RADIAN = Math.PI / 180;
+// const RADIAN = Math.PI / 180;
 
 class DeckGLLayer extends maptalks.CanvasLayer {
     static getTargetZoom(map) {
@@ -40,56 +41,12 @@ class DeckGLLayer extends maptalks.CanvasLayer {
         this.renderScene();
     }
 
-    /**
-     * coordinates to vector
-     * @param coordinate
-     * @returns {null}
-     */
-    coordinateToVector3(coordinate) {
-        const map = this.getMap();
-        if (!map) {
-            return null;
-        }
-        const p = map.coordinateToPoint(coordinate, DeckGLLayer.getTargetZoom(map));
-        return p;
-    }
-
-    lookAt(vector) {
-        const renderer = this._getRenderer();
-        if (renderer) {
-            renderer.context.lookAt(vector);
-        }
-        return this;
-    }
-
-    getCamera() {
-        const renderer = this._getRenderer();
-        if (renderer) {
-            return renderer.camera;
-        }
-        return null;
-    }
-
-    getScene() {
-        const renderer = this._getRenderer();
-        if (renderer) {
-            return renderer.scene;
-        }
-        return null;
-    }
-
     renderScene() {
         const renderer = this._getRenderer();
         if (renderer) {
             return renderer.renderScene();
         }
         return this;
-    }
-
-    _getFovRatio() {
-        const map = this.getMap();
-        const fov = map.getFov();
-        return Math.tan(fov / 2 * RADIAN);
     }
 }
 
@@ -116,18 +73,26 @@ class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
                 if (canvas.style) {
                     canvas.style.width = width + 'px';
                     canvas.style.height = height + 'px';
+                    canvas.clientWidth = width;
+                    canvas.clientHeight = height;
                 }
                 this.canvas = this.layer._canvas;
             } else {
-                this.canvas = maptalks.Canvas.createCanvas(width, height, map.CanvasClass);
-                const gl = this.gl = createContext(this.canvas, this.layer.options['glOptions']);
+                this.canvas = createCanvas(width, height, retina, map.CanvasClass);
+                const gl = createContext(this.canvas, this.layer.options['glOptions']);
                 gl.clearColor(0.0, 0.0, 0.0, 0.0);
-                // this.context = this.gl;
+                // gl.canvas.setAttribute('width', width);
+                // gl.canvas.setAttribute('height', height);
+                // gl.canvas.style.width = width + 'px';
+                // gl.canvas.style.height = height + 'px';
+                // gl.canvas.setAttribute('clientWidth', width);
+                // gl.canvas.setAttribute('clientHeight', height);
+                this.gl = gl;
             }
             this.onCanvasCreate();
 
             if (this.layer.options['doubleBuffer']) {
-                this.buffer = maptalks.Canvas.createCanvas(this.canvas.width, this.canvas.height, map.CanvasClass);
+                this.buffer = createCanvas(this.canvas.width, this.canvas.height, retina, map.CanvasClass);
                 this.context = this.buffer.getContext('2d');
             }
 
@@ -177,31 +142,6 @@ class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
         return null;
     }
 
-    // renderScene() {
-    //     this._locateCamera();
-    //     const { layers } = this.layer.props;
-    //     const map = this.getMap();
-    //     const size = map.getSize();
-    //     const [width, height] = [retina * size['width'], retina * size['height']];
-    //     const _props = {
-    //         width: width, // Number, required
-    //         height: height,
-    //         canvas: this.canvas,
-    //         layers: layers,
-    //         // gl: this.gl,
-    //         _customRender: true,
-    //         initialViewState: this._getViewState()
-    //     };
-    //     if (!this.deckLayer) {
-    //         this.deckLayer = new deck.Deck(_props); // eslint-disable-line
-    //     } else {
-    //         this.deckLayer.setProps(Object.assign({
-    //             viewState: _props.initialViewState
-    //         }, _props));
-    //     }
-    //     this.completeRender();
-    // }
-
     remove() {
         delete this._drawContext;
         super.remove();
@@ -224,96 +164,40 @@ class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
         }
     }
 
-    _locateCamera() {
-        // const map = this.getMap();
-        // const size = map.getSize();
-        // const scale = map.getScale();
-        // const camera = this.camera;
-        // // 1. camera is always looking at map's center
-        // // 2. camera's distance from map's center doesn't change when rotating and tilting.
-        // const center2D = map.coordinateToPoint(map.getCenter(), getTargetZoom(map));
-        // const pitch = map.getPitch() * RADIAN;
-        // const bearing = map.getBearing() * RADIAN;
-        //
-        // const ratio = this.layer._getFovRatio();
-        // const z = -scale * size.height / 2 / ratio;
-        //
-        // // when map tilts, camera's position should be lower in Z axis
-        // camera.position.z = z * Math.cos(pitch);
-        // // and [dist] away from map's center on XY plane to tilt the scene.
-        // const dist = Math.sin(pitch) * z;
-        // // when map rotates, the camera's xy position is rotating with the given bearing and still keeps [dist] away from map's center
-        // camera.position.x = center2D.x + dist * Math.sin(bearing);
-        // camera.position.y = center2D.y - dist * Math.cos(bearing);
-        //
-        // // when map rotates, camera's up axis is pointing to south direction of map
-        // camera.up.set(Math.sin(bearing), -Math.cos(bearing), 0);
-        //
-        // // look at to the center of map
-        // camera.lookAt(new THREE.Vector3(center2D.x, center2D.y, 0));
-        // camera.updateProjectionMatrix();
-    }
-
-    _getLookAtMat() {
-        const map = this.getMap();
-
-        const targetZ = DeckGLLayer.getTargetZoom(map);
-
-        const size = map.getSize(),
-            scale = map.getScale() / map.getScale(targetZ);
-        // const center = this.cameraCenter = map._prjToPoint(map._getPrjCenter(), map.getMaxNativeZoom());
-        const center2D = this.cameraCenter = map.coordinateToPoint(map.getCenter(), targetZ);
-        const pitch = map.getPitch() * RADIAN;
-        const bearing = -map.getBearing() * RADIAN;
-
-        const ratio = this.layer._getFovRatio();
-        const z = scale * size.height / 2 / ratio;
-        const cz = z * Math.cos(pitch);
-        // and [dist] away from map's center on XY plane to tilt the scene.
-        const dist = Math.sin(pitch) * z;
-        // when map rotates, the camera's xy position is rotating with the given bearing and still keeps [dist] away from map's center
-        const cx = center2D.x + dist * Math.sin(bearing);
-        const cy = center2D.y + dist * Math.cos(bearing);
-
-        // when map rotates, camera's up axis is pointing to bearing from south direction of map
-        // default [0,1,0] is the Y axis while the angle of inclination always equal 0
-        // if you want to rotate the map after up an incline,please rotateZ like this:
-        // let up = new vec3(0,1,0);
-        // up.rotateZ(target,radians);
-        return {
-            eye: [cx, cy, cz],
-            fov: ratio,
-            width: size.width,
-            height: size.height
-        };
-    }
-
     onCanvasCreate() {
-        const _viewParams = this._getLookAtMat();
-        const viewport = new PerspectiveView(_viewParams);
-        const layerManager = new LayerManager(this.gl, {});
-        layerManager.setViews(viewport);
-        this.layerManager = layerManager;
+        if (!this.deck) {
+            const { layers } = this.layer.props;
+            this.deck = new Deck({
+                // TODO - this should not be needed
+                canvas: 'deck-canvas',
+                width: '100%',
+                height: '100%',
+                controller: false,
+                _customRender: true,
+                viewState: this._getViewState()
+                // views: [new MapView({farZmultiplier: 0.101})]
+            });
+            this.deck._setGLContext(this.gl);
+            this.deck.width = 1920;
+            this.deck.height = 505;
+            this.deck.setProps({
+                layers: layers
+            });
+        }
     }
 
     renderScene() {
-        // const { layers } = this.layer.props;
-        const _viewParams = this._getLookAtMat();
-        const viewport = new PerspectiveView(_viewParams);
-        this.layerManager.setViews(viewport);
-        this.setProps({
-            width: this.canvas.width,
-            height: this.canvas.height
-        });
-        this.completeRender();
-    }
+        if (this.deck) {
+            const viewState = this._getViewState();
+            // console.log('render3D', viewState, matrix);
+            // gl.depthRange(0.9999, 1.0);
 
-    setProps(props) {
-        props = Object.assign({}, this.layer.props, props);
-        // Update layer manager props (but not size)
-        if (this.layerManager) {
-            this.layerManager.setProps(props);
+            this.deck.setProps({ viewState });
+            this.deck.width = 1920;
+            this.deck.height = 505;
+            this.deck._drawLayers();
         }
+        this.completeRender();
     }
 }
 
@@ -324,3 +208,33 @@ export {
     DeckGLLayer,
     DeckGLRenderer
 }
+
+const map = new maptalks.Map('map', {
+    center: [-74, 40.72],
+    zoom: 5,
+    pitch: 60,
+    bearing: 20,
+    centerCross: true,
+    baseLayer: new maptalks.TileLayer('tile', {
+        'urlTemplate': 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
+        'subdomains': ['a', 'b', 'c', 'd']
+    })
+});
+
+const deckLayer = new DeckGLLayer('deck', {
+    'layers': [
+        new GeoJsonLayer({
+            data: 'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_1_states_provinces_shp.geojson',
+            stroked: true,
+            filled: true,
+            lineWidthMinPixels: 2,
+            opacity: 1,
+            getLineColor: () => [255, 0, 0],
+            getFillColor: () => [200, 200, 0, 200]
+        })
+    ]
+}, {
+    renderer: 'gl'
+});
+
+map.addLayer(deckLayer);

@@ -16,7 +16,6 @@
 <body>
 <div id="map"></div>
 <script src="../node_modules/maptalks/dist/maptalks.js"></script>
-<script src="../node_modules/deck.gl/deckgl.min.js"></script>
 <script src="../dist/maptalks.deckgl.js"></script>
 <script>
     var map = new maptalks.Map("map", {
@@ -32,37 +31,6 @@
     });
 
     var deckLayer = new maptalks.DeckGLLayer('deck', {
-        layers: [
-            // new deck.i.TripsLayer({
-            //     id: 'trips',
-            //     data: DATA_URL.TRIPS,
-            //     getPath: d => d.segments,
-            //     getColor: d => (d.vendor === 0 ? [253, 128, 93] : [23, 184, 190]),
-            //     opacity: 0.3,
-            //     strokeWidth: 2,
-            //     trailLength: 180,
-            //     currentTime: 0
-            // }),
-            new deck.PolygonLayer({
-                id: 'buildings',
-                data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/buildings.json',
-                extruded: true,
-                wireframe: false,
-                fp64: true,
-                opacity: 0.5,
-                getPolygon: f => f.polygon,
-                getElevation: f => f.height,
-                getFillColor: [74, 80, 87],
-                lightSettings: {
-                    lightsPosition: [-74.05, 40.7, 8000, -73.5, 41, 5000],
-                    ambientRatio: 0.05,
-                    diffuseRatio: 0.6,
-                    specularRatio: 0.8,
-                    lightsStrength: [2.0, 0.0, 0.0, 0.0],
-                    numberOfLights: 2
-                }
-            })
-        ]
     }, {
         renderer: 'gl'
     });
