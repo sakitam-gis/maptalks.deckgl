@@ -5,8 +5,8 @@ const CONFIG = {
     // mode: 'production',
 
     entry: {
-        app: resolve('src/index.js')
-        // app: resolve('mapbox/index.js')
+        // app: resolve('src/index.js')
+        app: resolve('mapbox/index.js')
     },
 
     module: {
@@ -28,6 +28,7 @@ const CONFIG = {
     },
 
     devServer: {
+        host: '192.168.1.151',
         stats: {
             warnings: false
         }

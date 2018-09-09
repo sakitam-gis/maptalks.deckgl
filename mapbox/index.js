@@ -1,11 +1,6 @@
 import mapboxgl from './mapbox-gl-dev';
-import {GeoJsonLayer} from '@deck.gl/layers';
-
+import { LineLayer } from '@deck.gl/layers';
 import DeckLayer from '@deck.gl/mapbox-layers';
-
-// Outlines of US States. Source: Natural Earth http://www.naturalearthdata.com/ via geojson.xyz
-const US_MAP_GEOJSON =
-    'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_1_states_provinces_shp.geojson'; //eslint-disable-line
 
 const INITIAL_VIEW_STATE = {
     latitude: 40.70708981756565,
@@ -30,14 +25,15 @@ const map = new mapboxgl.Map({
 map.on('load', () => {
     const deckLayer = new DeckLayer({
         layers: [
-            new GeoJsonLayer({
-                data: US_MAP_GEOJSON,
-                stroked: true,
-                filled: true,
-                lineWidthMinPixels: 2,
-                opacity: 1,
-                getLineColor: () => [255, 0, 0],
-                getFillColor: () => [200, 200, 0, 200]
+            new LineLayer({
+                id: 'line-layer',
+                data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/website/bart-segments.json',
+                pickable: true,
+                getStrokeWidth: 12,
+                getSourcePosition: d => d.from.coordinates,
+                getTargetPosition: d => d.to.coordinates,
+                getColor: d => [Math.sqrt(d.inbound + d.outbound), 140, 0],
+                // onHover: ({object}) => setTooltip(`${object.from.name} to ${object.to.name}`)
             })
         ]
     });
@@ -45,7 +41,7 @@ map.on('load', () => {
     map.addLayer(deckLayer, getFirstTextLayerId(map.getStyle()));
 });
 
-function getFirstTextLayerId (style) {
+function getFirstTextLayerId(style) {
     const layers = style.layers;
     // Find the index of the first symbol (i.e. label) layer in the map style
     let firstSymbolId;
