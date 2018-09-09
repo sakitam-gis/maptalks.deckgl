@@ -5,10 +5,24 @@ import { createContext, createCanvas } from './helper';
 
 const retina = maptalks.Browser.retina ? 2 : 1;
 
+Deck.prototype._checkForCanvasSizeChange = function () {
+    const canvas = this.canvas;
+    if (canvas && (this.width !== canvas.width || this.height !== canvas.height)) {
+        this.width = canvas.width;
+        this.height = canvas.height;
+        return true;
+    }
+    return false;
+};
+
 const _options = {
-    'renderer' : 'gl',
+    'renderer' : 'webgl',
     'doubleBuffer' : true,
-    'glOptions' : null
+    'glOptions' : {
+        'alpha': true,
+        'antialias': true,
+        'preserveDrawingBuffer': true
+    }
 };
 
 // const RADIAN = Math.PI / 180;
@@ -57,38 +71,24 @@ class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
         this.renderScene();
     }
 
-    hitDetect() {
-        return false;
+    needToRedraw() {
+        const map = this.getMap();
+        if (map.isZooming() && !map.getPitch()) {
+            return false;
+        }
+        return super.needToRedraw();
     }
 
     createCanvas() {
+        if (this.canvas) return;
+        // super.createCanvas();
         if (!this.canvas) {
             const map = this.getMap();
             const size = map.getSize();
             const [width, height] = [retina * size['width'], retina * size['height']];
-            if (this.layer._canvas) {
-                const canvas = this.layer._canvas;
-                canvas.width = width;
-                canvas.height = height;
-                if (canvas.style) {
-                    canvas.style.width = width + 'px';
-                    canvas.style.height = height + 'px';
-                    canvas.clientWidth = width;
-                    canvas.clientHeight = height;
-                }
-                this.canvas = this.layer._canvas;
-            } else {
-                this.canvas = createCanvas(width, height, retina, map.CanvasClass);
-                const gl = createContext(this.canvas, this.layer.options['glOptions']);
-                gl.clearColor(0.0, 0.0, 0.0, 0.0);
-                // gl.canvas.setAttribute('width', width);
-                // gl.canvas.setAttribute('height', height);
-                // gl.canvas.style.width = width + 'px';
-                // gl.canvas.style.height = height + 'px';
-                // gl.canvas.setAttribute('clientWidth', width);
-                // gl.canvas.setAttribute('clientHeight', height);
-                this.gl = gl;
-            }
+            this.canvas = createCanvas(width, height, retina, map.CanvasClass);
+            const gl = this.gl = createContext(this.canvas, this.layer.options['glOptions']);
+            gl.clearColor(0.0, 0.0, 0.0, 0.0);
             this.onCanvasCreate();
 
             if (this.layer.options['doubleBuffer']) {
@@ -101,18 +101,10 @@ class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
                 'gl' : this.gl
             });
         }
-        return this.canvas;
     }
 
-    // onCanvasCreate() {
-    //     super.onCanvasCreate();
-    //     this.layer.onCanvasCreate(this.context, this.scene, this.camera);
-    // }
-
     resizeCanvas(canvasSize) {
-        if (!this.canvas) {
-            return;
-        }
+        if (!this.canvas) return;
         const size = canvasSize ? canvasSize : this.getMap().getSize();
         this.canvas.height = retina * size['height'];
         this.canvas.width = retina * size['width'];
@@ -142,6 +134,30 @@ class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
         return null;
     }
 
+    onZoomStart() {
+        super.onZoomStart.apply(this, arguments);
+    }
+
+    onZoomEnd() {
+        super.onZoomEnd.apply(this, arguments);
+    }
+
+    // getCanvasImage() {
+    //     const canvasImg = super.getCanvasImage();
+    //     if (canvasImg && canvasImg.image && this.buffer) {
+    //         const canvas = canvasImg.image;
+    //         if (this.buffer.width !== canvas.width || this.buffer.height !== canvas.height || !this._preserveBuffer) {
+    //             this.buffer.width = canvas.width;
+    //             this.buffer.height = canvas.height;
+    //         }
+    //         if (!this._preserveBuffer) {
+    //             this.context.drawImage(canvas, 0, 0);
+    //         }
+    //         canvasImg.image = this.buffer;
+    //     }
+    //     return canvasImg;
+    // }
+
     remove() {
         delete this._drawContext;
         super.remove();
@@ -165,6 +181,7 @@ class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
     }
 
     onCanvasCreate() {
+        super.onCanvasCreate();
         if (!this.deck) {
             const { layers } = this.layer.props;
             this.deck = new Deck({
@@ -178,8 +195,6 @@ class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
                 // views: [new MapView({farZmultiplier: 0.101})]
             });
             this.deck._setGLContext(this.gl);
-            this.deck.width = 1920;
-            this.deck.height = 505;
             this.deck.setProps({
                 layers: layers
             });
@@ -193,16 +208,13 @@ class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
             // gl.depthRange(0.9999, 1.0);
 
             this.deck.setProps({ viewState });
-            this.deck.width = 1920;
-            this.deck.height = 505;
             this.deck._drawLayers();
         }
         this.completeRender();
     }
 }
 
-DeckGLLayer.registerRenderer('canvas', DeckGLRenderer);
-DeckGLLayer.registerRenderer('gl', DeckGLRenderer);
+DeckGLLayer.registerRenderer('webgl', DeckGLRenderer);
 
 export {
     DeckGLLayer,
@@ -210,11 +222,14 @@ export {
 }
 
 const map = new maptalks.Map('map', {
-    center: [-74, 40.72],
-    zoom: 5,
-    pitch: 60,
-    bearing: 20,
+    center: [-100, 40],
+    zoom: 3,
+    pitch: 30,
+    bearing: 30,
     centerCross: true,
+    spatialReference:{
+        projection:'EPSG:3857'
+    },
     baseLayer: new maptalks.TileLayer('tile', {
         'urlTemplate': 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
         'subdomains': ['a', 'b', 'c', 'd']
@@ -228,13 +243,11 @@ const deckLayer = new DeckGLLayer('deck', {
             stroked: true,
             filled: true,
             lineWidthMinPixels: 2,
-            opacity: 1,
-            getLineColor: () => [255, 0, 0],
-            getFillColor: () => [200, 200, 0, 200]
+            opacity: 0.4,
+            getLineColor: () => [255, 100, 100],
+            getFillColor: () => [200, 160, 0, 180]
         })
     ]
-}, {
-    renderer: 'gl'
 });
 
 map.addLayer(deckLayer);

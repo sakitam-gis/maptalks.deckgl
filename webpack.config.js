@@ -6,6 +6,7 @@ const CONFIG = {
 
     entry: {
         app: resolve('src/index.js')
+        // app: resolve('mapbox/index.js')
     },
 
     module: {
@@ -14,7 +15,8 @@ const CONFIG = {
                 test: /(\.jsx|\.js)$/,
                 loader: 'babel-loader',
                 include: [
-                    resolve('src')
+                    resolve('src'),
+                    resolve('mapbox')
                 ]
             }
         ]
