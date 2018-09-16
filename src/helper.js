@@ -5,7 +5,7 @@ const createContext = function (canvas, glOptions = {}) {
     }
 
     canvas.addEventListener('webglcontextcreationerror', onContextCreationError, false);
-    let gl = canvas.getContext('webgl2', glOptions);
+    let gl = canvas.getContext('webgl', glOptions);
     gl = gl || canvas.getContext('experimental-webgl2', glOptions);
     if (!gl) {
         gl = canvas.getContext('webgl', glOptions);

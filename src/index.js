@@ -1,40 +1,21 @@
 import * as maptalks from 'maptalks';
-import { Deck } from '@deck.gl/core'; // eslint-disable-line
-import { GeoJsonLayer } from '@deck.gl/layers';
-import { createContext, createCanvas } from './helper';
-
-const retina = maptalks.Browser.retina ? 2 : 1;
-
-Deck.prototype._checkForCanvasSizeChange = function () {
-    const canvas = this.canvas;
-    if (canvas && (this.width !== canvas.width || this.height !== canvas.height)) {
-        this.width = canvas.width;
-        this.height = canvas.height;
-        return true;
-    }
-    return false;
-};
+import GLRenderer from './gl-render';
+import { main, render } from './webgl-sence';
 
 const _options = {
-    'renderer' : 'webgl',
-    'doubleBuffer' : true,
-    'glOptions' : {
+    'renderer': 'webgl',
+    'doubleBuffer': true,
+    'glOptions': {
         'alpha': true,
         'antialias': true,
         'preserveDrawingBuffer': true
     }
 };
 
-// const RADIAN = Math.PI / 180;
-
-class DeckGLLayer extends maptalks.CanvasLayer {
-    static getTargetZoom(map) {
-        return map.getMaxNativeZoom();
-    }
-
-    constructor(id, props, options = {}) {
+class GLLayer extends maptalks.CanvasLayer {
+    constructor(id, data, options = {}) {
         super(id, Object.assign(_options, options));
-        this.props = props;
+        this.data = data;
     }
 
     prepareToDraw() {}
@@ -57,165 +38,24 @@ class DeckGLLayer extends maptalks.CanvasLayer {
 
     renderScene() {
         const renderer = this._getRenderer();
-        if (renderer) {
-            return renderer.renderScene();
-        }
-        return this;
-    }
-}
-
-class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
-
-    _drawLayer() {
-        super._drawLayer.apply(this, arguments);
-        this.renderScene();
-    }
-
-    needToRedraw() {
-        const map = this.getMap();
-        if (map.isZooming() && !map.getPitch()) {
-            return false;
-        }
-        return super.needToRedraw();
-    }
-
-    createCanvas() {
-        if (this.canvas) return;
-        // super.createCanvas();
-        if (!this.canvas) {
-            const map = this.getMap();
-            const size = map.getSize();
-            const [width, height] = [retina * size['width'], retina * size['height']];
-            this.canvas = createCanvas(width, height, retina, map.CanvasClass);
-            const gl = this.gl = createContext(this.canvas, this.layer.options['glOptions']);
-            gl.clearColor(0.0, 0.0, 0.0, 0.0);
-            this.onCanvasCreate();
-
-            if (this.layer.options['doubleBuffer']) {
-                this.buffer = createCanvas(this.canvas.width, this.canvas.height, retina, map.CanvasClass);
-                this.context = this.buffer.getContext('2d');
-            }
-
-            this.layer.fire('canvascreate', {
-                'context' : this.context,
-                'gl' : this.gl
-            });
-        }
-    }
-
-    resizeCanvas(canvasSize) {
-        if (!this.canvas) return;
-        const size = canvasSize ? canvasSize : this.getMap().getSize();
-        this.canvas.height = retina * size['height'];
-        this.canvas.width = retina * size['width'];
-        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-    }
-
-    clearCanvas() {
-        if (!this.canvas) {
-            return;
-        }
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        if (this.context) {
-            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        }
-    }
-
-    prepareCanvas() {
-        if (this.context) {
-            return super.prepareCanvas();
-        }
-        if (!this.canvas) {
-            this.createCanvas();
+        const context = renderer.context || renderer.canvas.getContext('2d');
+        if (this._layer) {
+            render(new Date().getTime());
         } else {
-            this.clearCanvas();
+            this._layer = main(renderer.gl);
         }
-        this.layer.fire('renderstart', { 'context' : this.context, 'gl' : this.gl });
-        return null;
-    }
-
-    onZoomStart() {
-        super.onZoomStart.apply(this, arguments);
-    }
-
-    onZoomEnd() {
-        super.onZoomEnd.apply(this, arguments);
-    }
-
-    getCanvasImage() {
-        const canvasImg = super.getCanvasImage();
-        // console.log(canvasImg);
-        // const url = canvasImg.image.toDataURL();
-        // const image = new Image();
-        // image.src = url;
-        // image.onload = function () {
-        //     console.log('success');
-        //     document.body.appendChild(image);
-        // };
-        return canvasImg;
-    }
-
-    remove() {
-        delete this._drawContext;
-        super.remove();
-    }
-
-    _getViewState() {
-        const map = this.getMap();
-        const zoom = map.getGLZoom();
-        const maxZoom = DeckGLLayer.getTargetZoom(map);
-        const center = map.getCenter();
-        const pitch = map.getPitch();
-        const bearing = map.getBearing();
-        return {
-            latitude: center['y'],
-            longitude: center['x'],
-            zoom: zoom,
-            bearing: bearing,
-            pitch: pitch,
-            maxZoom: maxZoom
-        }
-    }
-
-    onCanvasCreate() {
-        super.onCanvasCreate();
-        if (!this.deck) {
-            const { layers } = this.layer.props;
-            this.deck = new Deck({
-                // TODO - this should not be needed
-                canvas: 'deck-canvas',
-                width: '100%',
-                height: '100%',
-                controller: false,
-                _customRender: true,
-                viewState: this._getViewState()
-                // views: [new MapView({farZmultiplier: 0.101})]
-            });
-            this.deck._setGLContext(this.gl);
-            this.deck.setProps({
-                layers: layers
-            });
-        }
-    }
-
-    renderScene() {
-        if (this.deck) {
-            const viewState = this._getViewState();
-            // console.log('render3D', viewState, matrix);
-            // gl.depthRange(0.9999, 1.0);
-
-            this.deck.setProps({ viewState });
-            this.deck._drawLayers();
-        }
-        this.completeRender();
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+        context.save();
+        context.drawImage(renderer.gl.canvas, 0, 0, context.canvas.width, context.canvas.height);
+        context.restore();
+        renderer.completeRender();
     }
 }
 
-DeckGLLayer.registerRenderer('webgl', DeckGLRenderer);
+GLLayer.registerRenderer('webgl', GLRenderer);
 
 export {
-    DeckGLLayer,
-    DeckGLRenderer
+    GLLayer
 }
 
 const map = new maptalks.Map('map', {
@@ -224,8 +64,8 @@ const map = new maptalks.Map('map', {
     pitch: 30,
     bearing: 30,
     centerCross: true,
-    spatialReference:{
-        projection:'EPSG:3857'
+    spatialReference: {
+        projection: 'EPSG:3857'
     },
     baseLayer: new maptalks.TileLayer('tile', {
         'urlTemplate': 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
@@ -233,18 +73,13 @@ const map = new maptalks.Map('map', {
     })
 });
 
-const deckLayer = new DeckGLLayer('deck', {
-    'layers': [
-        new GeoJsonLayer({
-            data: 'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_1_states_provinces_shp.geojson',
-            stroked: true,
-            filled: true,
-            lineWidthMinPixels: 2,
-            opacity: 1,
-            getLineColor: () => [255, 100, 100],
-            getFillColor: () => [200, 160, 0, 180]
-        })
-    ]
-});
+const features = [];
+const extent = map.getExtent();
+const ext = [extent.xmin, extent.ymin, extent.xmax, extent.ymax];
+for (let i = 0; i < 100; i++) {
+    features.push([ext[0] + (ext[2] - ext[0]) * Math.random(), ext[1] + (ext[3] - ext[1]) * Math.random(), 500]);
+}
 
-map.addLayer(deckLayer);
+const glLayer = new GLLayer('gl', features);
+
+map.addLayer(glLayer);
