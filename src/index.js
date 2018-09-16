@@ -142,21 +142,18 @@ class DeckGLRenderer extends maptalks.renderer.CanvasLayerRenderer {
         super.onZoomEnd.apply(this, arguments);
     }
 
-    // getCanvasImage() {
-    //     const canvasImg = super.getCanvasImage();
-    //     if (canvasImg && canvasImg.image && this.buffer) {
-    //         const canvas = canvasImg.image;
-    //         if (this.buffer.width !== canvas.width || this.buffer.height !== canvas.height || !this._preserveBuffer) {
-    //             this.buffer.width = canvas.width;
-    //             this.buffer.height = canvas.height;
-    //         }
-    //         if (!this._preserveBuffer) {
-    //             this.context.drawImage(canvas, 0, 0);
-    //         }
-    //         canvasImg.image = this.buffer;
-    //     }
-    //     return canvasImg;
-    // }
+    getCanvasImage() {
+        const canvasImg = super.getCanvasImage();
+        // console.log(canvasImg);
+        // const url = canvasImg.image.toDataURL();
+        // const image = new Image();
+        // image.src = url;
+        // image.onload = function () {
+        //     console.log('success');
+        //     document.body.appendChild(image);
+        // };
+        return canvasImg;
+    }
 
     remove() {
         delete this._drawContext;
@@ -222,8 +219,8 @@ export {
 }
 
 const map = new maptalks.Map('map', {
-    center: [-100, 40],
-    zoom: 3,
+    center: [-74.01194070150844, 40.70708981756565],
+    zoom: 10,
     pitch: 30,
     bearing: 30,
     centerCross: true,
@@ -243,7 +240,7 @@ const deckLayer = new DeckGLLayer('deck', {
             stroked: true,
             filled: true,
             lineWidthMinPixels: 2,
-            opacity: 0.4,
+            opacity: 1,
             getLineColor: () => [255, 100, 100],
             getFillColor: () => [200, 160, 0, 180]
         })

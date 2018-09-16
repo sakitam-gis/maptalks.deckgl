@@ -5,8 +5,8 @@ const CONFIG = {
     // mode: 'production',
 
     entry: {
-        // app: resolve('src/index.js')
-        app: resolve('mapbox/index.js')
+        app: resolve('src/index.js')
+        // app: resolve('mapbox/index.js')
     },
 
     module: {

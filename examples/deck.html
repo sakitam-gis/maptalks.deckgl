@@ -18,7 +18,14 @@
 <script src="../node_modules/deck.gl/deckgl.min.js"></script>
 <script>
     const cn = document.getElementById('map');
-    const gl = cn.getContext('webgl2');
+    const gl = cn.getContext('webgl2', {
+        alpha: true, // 值为true，表示为上下文创建一个Alpha通道缓冲区；默认值为true；
+        depth: true, // 值为true，表示可以使用16位深缓冲区；默认值为true；
+        stencil: false, // 值为true，表示可以使用8位模板缓冲区；默认值为false；
+        antialias: true, // 值为true，表示将使用默认机制执行抗锯齿操作；默认值为true。
+        premultipliedAlpha: true, // 值为true，表示绘图缓冲区有预乘Alpha值；默认为true;
+        preserveDrawingBuffer: true // 值为true；表示在绘图完成后保留绘图缓冲区；默认值为false
+    });
     const LIGHT_SETTINGS = {
         lightsPosition: [-74.05, 40.7, 8000, -73.5, 41, 5000],
         ambientRatio: 0.05,
@@ -50,7 +57,7 @@
         gl: gl,
         onViewportChange: onViewportChange,
         layers: render(),
-        _customRender: true
+        _customRender: false
         // controller: true,
         // viewState: {}
     };
@@ -87,6 +94,7 @@
                 }
             }, props))
         }
+        getImage();
     };
 
     function render () {
@@ -114,6 +122,16 @@
                 lightSettings: LIGHT_SETTINGS
             })
         ];
+    }
+
+    function getImage () {
+        const url = cn.toDataURL();
+        const image = new Image();
+        image.src = url;
+        image.onload = function () {
+            console.log('success');
+            document.body.appendChild(image);
+        };
     }
 </script>
 </body>
