@@ -38,16 +38,19 @@ class GLLayer extends maptalks.CanvasLayer {
 
     renderScene() {
         const renderer = this._getRenderer();
-        const context = renderer.context || renderer.canvas.getContext('2d');
+        // const context = renderer.context || renderer.canvas.getContext('2d');
         if (this._layer) {
             render(new Date().getTime());
         } else {
             this._layer = main(renderer.gl);
         }
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-        context.save();
-        context.drawImage(renderer.gl.canvas, 0, 0, context.canvas.width, context.canvas.height);
-        context.restore();
+        // context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+        // context.save();
+        // context.fillRect(25, 25, 100, 100);
+        // context.clearRect(45, 45, 60, 60);
+        // context.strokeRect(50, 50, 50, 50);
+        // // context.drawImage(renderer.gl.canvas, 0, 0, context.canvas.width, context.canvas.height);
+        // context.restore();
         renderer.completeRender();
     }
 }

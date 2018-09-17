@@ -4,7 +4,11 @@ import { createCanvas, createContext } from './helper';
 const retina = maptalks.Browser.retina ? 2 : 1;
 
 class GLRenderer extends maptalks.renderer.CanvasLayerRenderer {
-    draw() {}
+    draw() {
+        this.prepareCanvas();
+        this.prepareDrawContext();
+        this._drawLayer();
+    }
 
     needToRedraw() {
         const map = this.getMap();
@@ -12,6 +16,12 @@ class GLRenderer extends maptalks.renderer.CanvasLayerRenderer {
             return false;
         }
         return super.needToRedraw();
+    }
+
+    onCanvasCreate() {
+        if (this.canvas && this.layer.options['doubleBuffer']) {
+            this.buffer = createCanvas(this.canvas.width, this.canvas.height, retina, this.getMap().CanvasClass);
+        }
     }
 
     createCanvas() {
@@ -23,12 +33,26 @@ class GLRenderer extends maptalks.renderer.CanvasLayerRenderer {
             this.canvas = createCanvas(width, height, retina, map.CanvasClass);
             this.gl = createContext(this.canvas, this.layer.options['glOptions']);
             this.onCanvasCreate();
-            if (this.layer.options['doubleBuffer']) {
-                this.buffer = createCanvas(this.canvas.width, this.canvas.height, retina, map.CanvasClass);
-                this.context = this.buffer.getContext('2d');
-            }
             this.layer.fire('canvascreate', { 'context': this.gl });
         }
+    }
+
+    getCanvasImage() {
+        const canvasImg = super.getCanvasImage();
+        if (canvasImg && canvasImg.image && this.layer.options['doubleBuffer']) {
+            const canvas = canvasImg.image;
+            if (this.buffer.width !== canvas.width || this.buffer.height !== canvas.height) {
+                this.buffer.width = canvas.width;
+                this.buffer.height = canvas.height;
+            }
+            const bufferContext = this.buffer.getContext('2d');
+            const prevent = this.layer.doubleBuffer(bufferContext, this.context);
+            if (prevent === undefined || prevent) {
+                maptalks.Canvas.image(bufferContext, canvas, 0, 0);
+                canvasImg.image = this.buffer;
+            }
+        }
+        return canvasImg;
     }
 
     resizeCanvas(canvasSize) {
@@ -49,16 +73,11 @@ class GLRenderer extends maptalks.renderer.CanvasLayerRenderer {
         }
     }
 
-    prepareCanvas() {
-        super.prepareCanvas();
-        if (!this.canvas) {
-            this.createCanvas();
-        } else {
-            this.clearCanvas();
-        }
-        this.layer.fire('renderstart', { 'context': this.gl });
-        return null;
-    }
+    // prepareCanvas() {
+    //     super.prepareCanvas();
+    //     this.layer.fire('renderstart', { 'context': this.gl });
+    //     return null;
+    // }
 
     onZoomStart() {
         super.onZoomStart.apply(this, arguments);
