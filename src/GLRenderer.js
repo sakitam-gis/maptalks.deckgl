@@ -10,6 +10,10 @@ class GLRenderer extends maptalks.renderer.CanvasLayerRenderer {
         this._drawLayer();
     }
 
+    /**
+     * tell layer redraw
+     * @returns {*}
+     */
     needToRedraw() {
         const map = this.getMap();
         if (map.isZooming() && !map.getPitch()) {
@@ -18,12 +22,19 @@ class GLRenderer extends maptalks.renderer.CanvasLayerRenderer {
         return super.needToRedraw();
     }
 
+    /**
+     * listen canvas create
+     */
     onCanvasCreate() {
         if (this.canvas && this.layer.options['doubleBuffer']) {
             this.buffer = createCanvas(this.canvas.width, this.canvas.height, retina, this.getMap().CanvasClass);
+            this.context = this.buffer.getContext('2d');
         }
     }
 
+    /**
+     * create canvas
+     */
     createCanvas() {
         if (this.canvas) return;
         if (!this.canvas) {
@@ -33,28 +44,14 @@ class GLRenderer extends maptalks.renderer.CanvasLayerRenderer {
             this.canvas = createCanvas(width, height, retina, map.CanvasClass);
             this.gl = createContext(this.canvas, this.layer.options['glOptions']);
             this.onCanvasCreate();
-            this.layer.fire('canvascreate', { 'context': this.gl });
+            this.layer.fire('canvascreate', { 'context': this.context, 'gl': this.gl });
         }
     }
 
-    getCanvasImage() {
-        const canvasImg = super.getCanvasImage();
-        if (canvasImg && canvasImg.image && this.layer.options['doubleBuffer']) {
-            const canvas = canvasImg.image;
-            if (this.buffer.width !== canvas.width || this.buffer.height !== canvas.height) {
-                this.buffer.width = canvas.width;
-                this.buffer.height = canvas.height;
-            }
-            const bufferContext = this.buffer.getContext('2d');
-            const prevent = this.layer.doubleBuffer(bufferContext, this.context);
-            if (prevent === undefined || prevent) {
-                maptalks.Canvas.image(bufferContext, canvas, 0, 0);
-                canvasImg.image = this.buffer;
-            }
-        }
-        return canvasImg;
-    }
-
+    /**
+     * when map changed, call canvas change
+     * @param canvasSize
+     */
     resizeCanvas(canvasSize) {
         if (!this.canvas) return;
         const size = canvasSize ? canvasSize : this.getMap().getSize();
@@ -63,21 +60,27 @@ class GLRenderer extends maptalks.renderer.CanvasLayerRenderer {
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     }
 
+    /**
+     * clear canvas
+     */
     clearCanvas() {
-        if (!this.canvas) {
-            return;
-        }
+        if (!this.canvas) return;
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
         if (this.context) {
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
     }
 
-    // prepareCanvas() {
-    //     super.prepareCanvas();
-    //     this.layer.fire('renderstart', { 'context': this.gl });
-    //     return null;
-    // }
+    prepareCanvas() {
+        if (!this.canvas) {
+            this.createCanvas();
+        } else {
+            this.clearCanvas();
+        }
+        const mask = super.prepareCanvas();
+        this.layer.fire('renderstart', { 'context' : this.context, 'gl' : this.gl });
+        return mask;
+    }
 
     onZoomStart() {
         super.onZoomStart.apply(this, arguments);
