@@ -1,16 +1,6 @@
 import * as maptalks from 'maptalks';
 import GLRenderer from './GLRenderer';
-import { Deck } from '@deck.gl/core';
-
-Deck.prototype._checkForCanvasSizeChange = function () {
-    const canvas = this.canvas;
-    if (canvas && (this.width !== canvas.width || this.height !== canvas.height)) {
-        this.width = canvas.width;
-        this.height = canvas.height;
-        return true;
-    }
-    return false;
-};
+import Deck from './deck';
 
 class DeckGLLayer extends maptalks.CanvasLayer {
     static getTargetZoom(map) {
@@ -40,7 +30,7 @@ class DeckGLLayer extends maptalks.CanvasLayer {
         return {
             latitude: center['y'],
             longitude: center['x'],
-            zoom: zoom,
+            zoom: zoom ,
             bearing: bearing,
             pitch: pitch,
             maxZoom: maxZoom
