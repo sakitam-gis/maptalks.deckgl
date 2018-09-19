@@ -2,13 +2,23 @@ import * as maptalks from 'maptalks';
 import GLRenderer from './GLRenderer';
 import Deck from './deck';
 
+const _options = {
+    'renderer': 'webgl',
+    'doubleBuffer': true,
+    'glOptions': {
+        'alpha': true,
+        'antialias': true,
+        'preserveDrawingBuffer': true
+    }
+};
+
 class DeckGLLayer extends maptalks.CanvasLayer {
     static getTargetZoom(map) {
         return map.getMaxNativeZoom();
     }
 
     constructor(id, props, options = {}) {
-        super(id, options);
+        super(id, Object.assign(_options, options));
         this.props = props;
     }
 
@@ -30,7 +40,7 @@ class DeckGLLayer extends maptalks.CanvasLayer {
         return {
             latitude: center['y'],
             longitude: center['x'],
-            zoom: zoom ,
+            zoom: zoom - 1,
             bearing: bearing,
             pitch: pitch,
             maxZoom: maxZoom
@@ -47,13 +57,14 @@ class DeckGLLayer extends maptalks.CanvasLayer {
             if (!renderer.gl) return;
             const { layers } = this.props;
             this.deck = new Deck({
-                // TODO - this should not be needed
-                canvas: 'deck-canvas',
-                width: '100%',
-                height: '100%',
                 controller: false,
                 _customRender: true,
-                viewState: viewState
+                viewState: viewState,
+                glOptions: {
+                    'alpha': true,
+                    'antialias': true,
+                    'preserveDrawingBuffer': true
+                }
             });
             this.deck._setGLContext(renderer.gl);
             this.deck.setProps({

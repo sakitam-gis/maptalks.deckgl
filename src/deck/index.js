@@ -1,8 +1,7 @@
 import LayerManager from './layer-manager';
 import { Stats } from 'probe.gl';
-import { EventManager } from 'mjolnir.js';
 import GL from 'luma.gl/constants';
-import { AnimationLoop, createGLContext, trackContextState, setParameters } from 'luma.gl';
+import { trackContextState, setParameters } from 'luma.gl';
 import ViewManager from '@deck.gl/core/dist/esm/lib/view-manager';
 import MapView from '@deck.gl/core/dist/esm/views/map-view';
 import EffectManager from '@deck.gl/core/dist/esm/experimental/lib/effect-manager';
@@ -25,10 +24,6 @@ const getCursor = ({ isDragging }) => (isDragging ? CURSOR.GRABBING : CURSOR.GRA
 function getPropTypes(PropTypes) {
     // Note: Arrays (layers, views, ) can contain falsy values
     return {
-        id: PropTypes.string,
-        width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-        height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-
         // layer/view/controller settings
         layers: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
         layerFilter: PropTypes.func,
@@ -57,18 +52,11 @@ function getPropTypes(PropTypes) {
         // Debug settings
         debug: PropTypes.bool,
         drawPickingColors: PropTypes.bool,
-
-        // Experimental props
-
-        // Forces a redraw every animation frame
         _animate: PropTypes.bool
     };
 }
 
 const defaultProps = {
-    id: 'deckgl-overlay',
-    width: '100%',
-    height: '100%',
     pickingRadius: 0,
     layerFilter: null,
     glOptions: {},
@@ -138,17 +126,12 @@ export default class Deck {
             this.viewManager.finalize();
             this.viewManager = null;
         }
-
-        if (this.eventManager) {
-            this.eventManager.destroy();
-        }
     }
 
     setProps(props) {
         this.stats.timeStart('deck.setProps');
         props = Object.assign({}, this.props, props);
         this.props = props;
-
         // We need to overwrite CSS style width and height with actual, numeric values
         const newProps = Object.assign({}, props, {
             views: this._getViews(props),
@@ -267,21 +250,21 @@ export default class Deck {
         return false;
     }
 
-    _createAnimationLoop(props) {
-        const { width, height, gl, glOptions, debug, useDevicePixels, autoResizeDrawingBuffer } = props;
-        return new AnimationLoop({
-            width,
-            height,
-            useDevicePixels,
-            autoResizeDrawingBuffer,
-            onCreateContext: opts =>
-                gl || createGLContext(Object.assign({}, glOptions, opts, { canvas: this.canvas, debug })),
-            onInitialize: this._onRendererInitialized,
-            onRender: this._onRenderFrame,
-            onBeforeRender: props.onBeforeRender,
-            onAfterRender: props.onAfterRender
-        });
-    }
+    // _createAnimationLoop(props) {
+    //     const { width, height, gl, glOptions, debug, useDevicePixels, autoResizeDrawingBuffer } = props;
+    //     return new AnimationLoop({
+    //         width,
+    //         height,
+    //         useDevicePixels,
+    //         autoResizeDrawingBuffer,
+    //         onCreateContext: opts =>
+    //             gl || createGLContext(Object.assign({}, glOptions, opts, { canvas: this.canvas, debug })),
+    //         onInitialize: this._onRendererInitialized,
+    //         onRender: this._onRenderFrame,
+    //         onBeforeRender: props.onBeforeRender,
+    //         onAfterRender: props.onAfterRender
+    //     });
+    // }
 
     // Get the most relevant view state: props.viewState, if supplied, shadows internal viewState
     // TODO: For backwards compatibility ensure numeric width and height is added to the viewState

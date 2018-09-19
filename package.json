@@ -65,7 +65,10 @@
     "maptalks": "^0.40.2"
   },
   "dependencies": {
+    "@deck.gl/experimental-layers": "^6.1.0",
     "babel-loader": "^8.0.2",
+    "d3-request": "^1.0.6",
+    "d3-scale": "^2.1.2",
     "deck.gl": "6.1.0-alpha.2",
     "gl-matrix": "^2.8.1",
     "maptalks": "^0.40.2",

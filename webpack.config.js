@@ -5,8 +5,10 @@ const CONFIG = {
     // mode: 'production',
 
     entry: {
-        app: resolve('src/index.js')
-        // app: resolve('mapbox/index.js')
+        // app: resolve('src/index.js'),
+        // app: resolve('examples/HexagonLayer.js'),
+        // app: resolve('examples/highway.js'),
+        app: resolve('examples/trips.js'),
     },
 
     module: {
@@ -16,7 +18,7 @@ const CONFIG = {
                 loader: 'babel-loader',
                 include: [
                     resolve('src'),
-                    resolve('mapbox')
+                    resolve('examples')
                 ]
             }
         ]
