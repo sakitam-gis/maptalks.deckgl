@@ -3,8 +3,8 @@ import { GeoJsonLayer } from '@deck.gl/layers';
 import { scaleLinear, scaleThreshold } from 'd3-scale';
 import DeckGLLayer from '../src/DeckGLLayer';
 
-const map = new maptalks.Map('map', {
-    center: [52.232395363869415, -1.4157267858730052],
+const map = new maptalks.Map('map3', {
+    center: [-100, 38],
     zoom: 6.6,
     pitch: 40.5,
     bearing: -27.396674584323023,
@@ -114,7 +114,7 @@ require('d3-request').csv('https://raw.githubusercontent.com/uber-common/deck.gl
                 })
             ]
         }, {
-            'animation': false,
+            'animation': true,
             'renderer': 'webgl'
         });
 

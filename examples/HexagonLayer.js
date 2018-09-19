@@ -2,7 +2,7 @@ import * as maptalks from 'maptalks';
 import { HexagonLayer } from '@deck.gl/layers';
 import DeckGLLayer from '../src/DeckGLLayer';
 
-const map = new maptalks.Map('map', {
+const map = new maptalks.Map('map2', {
     center: [52.232395363869415, -1.4157267858730052],
     zoom: 6.6,
     pitch: 40.5,

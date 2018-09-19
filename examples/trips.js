@@ -3,7 +3,7 @@ import { PolygonLayer } from '@deck.gl/layers';
 import DeckGLLayer from '../src/DeckGLLayer';
 import { TripsLayer } from '@deck.gl/experimental-layers';
 
-const map = new maptalks.Map('map', {
+const map = new maptalks.Map('map4', {
     center: [-74, 40.72],
     zoom: 13,
     pitch: 40.5,
@@ -15,32 +15,25 @@ const map = new maptalks.Map('map', {
     })
 });
 
+let inited = false;
+let deckLayer = null;
+
 const _animate = () => {
-    const {
-        loopLength = 1800, // unit corresponds to the timestamp in source data
-        animationSpeed = 30 // unit time per second
-    } = {};
+    const [loopLength, animationSpeed] = [1800, 30];
     const timestamp = Date.now() / 1000;
     const loopTime = loopLength / animationSpeed;
-
-    this.setState({
-        time: ((timestamp % loopTime) / loopTime) * loopLength
-    });
-    window.requestAnimationFrame(_animate);
-};
-
-const deckLayer = new DeckGLLayer('deck', {
-    'layers': [
-        // new TripsLayer({
-        //     id: 'trips',
-        //     data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/trips.json',
-        //     getPath: d => d.segments,
-        //     getColor: d => (d.vendor === 0 ? [253, 128, 93] : [23, 184, 190]),
-        //     opacity: 0.3,
-        //     strokeWidth: 2,
-        //     trailLength: 180,
-        //     currentTime: this.state.time
-        // }),
+    const time = ((timestamp % loopTime) / loopTime) * loopLength;
+    const layers = [
+        new TripsLayer({
+            id: 'trips',
+            data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/trips.json',
+            getPath: d => d.segments,
+            getColor: d => (d.vendor === 0 ? [253, 128, 93] : [23, 184, 190]),
+            opacity: 0.3,
+            strokeWidth: 2,
+            trailLength: 180,
+            currentTime: time
+        }),
         new PolygonLayer({
             id: 'buildings',
             data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/buildings.json',
@@ -60,10 +53,22 @@ const deckLayer = new DeckGLLayer('deck', {
                 numberOfLights: 2
             }
         })
-    ]
-}, {
-    'animation': false,
-    'renderer': 'webgl'
-});
+    ];
+    const props = {
+        layers: layers
+    };
+    if (!inited) {
+        inited = true;
+        deckLayer = new DeckGLLayer('deck', props, {
+            'animation': true,
+            'renderer': 'webgl'
+        });
 
-map.addLayer(deckLayer);
+        map.addLayer(deckLayer);
+    } else if (deckLayer) {
+        deckLayer.setProps(props);
+    }
+    window.requestAnimationFrame(_animate);
+};
+
+_animate();

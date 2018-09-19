@@ -2,7 +2,7 @@ import * as maptalks from 'maptalks';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import DeckGLLayer from './DeckGLLayer';
 
-const map = new maptalks.Map('map', {
+const map = new maptalks.Map('map1', {
     center: [-74.01194070150844, 40.70708981756565],
     zoom: 10,
     pitch: 30,
@@ -33,7 +33,7 @@ const deckLayer = new DeckGLLayer('deck', {
         })
     ]
 }, {
-    'animation': false,
+    'animation': true,
     'renderer': 'webgl'
 });
 

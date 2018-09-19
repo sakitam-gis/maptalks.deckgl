@@ -1,6 +1,7 @@
 import log from '@deck.gl/core/dist/esm/utils/log';
 import { createMat4, extractCameraVectors } from '@deck.gl/core/dist/esm/utils/math-utils';
 import { Matrix4, Vector3, equals } from 'math.gl';
+/* eslint-disable camelcase */
 import mat4_scale from 'gl-mat4/scale';
 import mat4_translate from 'gl-mat4/translate';
 import mat4_multiply from 'gl-mat4/multiply';

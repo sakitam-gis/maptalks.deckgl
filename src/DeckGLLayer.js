@@ -22,6 +22,24 @@ class DeckGLLayer extends maptalks.CanvasLayer {
         this.props = props;
     }
 
+    /**
+     * set props
+     * @param props
+     * @returns {DeckGLLayer}
+     */
+    setProps(props) {
+        this.props = Object.assign(this.props, props);
+        return this;
+    }
+
+    /**
+     * get props
+     * @returns {*}
+     */
+    getProps() {
+        return this.props;
+    }
+
     draw() {
         this.renderScene();
     }
@@ -50,12 +68,12 @@ class DeckGLLayer extends maptalks.CanvasLayer {
     renderScene() {
         const renderer = this._getRenderer();
         const viewState = this._getViewState();
+        const { layers } = this.props;
         if (this.deck) {
-            this.deck.setProps({ viewState });
+            this.deck.setProps({ viewState, layers });
             this.deck._drawLayers();
         } else {
             if (!renderer.gl) return;
-            const { layers } = this.props;
             this.deck = new Deck({
                 controller: false,
                 _customRender: true,
