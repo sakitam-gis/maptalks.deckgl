@@ -66,11 +66,12 @@ class DeckGLLayer extends maptalks.CanvasLayer {
     }
 
     renderScene() {
+        const map = this.getMap()
         const renderer = this._getRenderer();
         const viewState = this._getViewState();
         const { layers } = this.props;
         if (this.deck) {
-            this.deck.setProps({ viewState, layers });
+            this.deck.setProps({ viewState, layers, targetMap: map });
             this.deck._drawLayers();
         } else {
             if (!renderer.gl) return;
@@ -86,7 +87,8 @@ class DeckGLLayer extends maptalks.CanvasLayer {
             });
             this.deck._setGLContext(renderer.gl);
             this.deck.setProps({
-                layers: layers
+                layers: layers,
+                targetMap: map
             });
         }
         renderer.completeRender();

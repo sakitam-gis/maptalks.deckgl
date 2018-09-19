@@ -29,7 +29,8 @@ export default class WebMercatorViewport extends Viewport {
             pitch = 0,
             bearing = 0,
             farZMultiplier = 10,
-            orthographic = false
+            orthographic = false,
+            targetMap = null
         } = opts;
 
         let { width, height, altitude = 1.5 } = opts;

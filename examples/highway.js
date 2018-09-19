@@ -9,9 +9,15 @@ const map = new maptalks.Map('map3', {
     pitch: 40.5,
     bearing: -27.396674584323023,
     centerCross: true,
+    spatialReference:{
+        projection:'EPSG:4326'
+    },
     baseLayer: new maptalks.TileLayer('tile', {
         'urlTemplate': 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
-        'subdomains': ['a', 'b', 'c', 'd']
+        'subdomains': ['a', 'b', 'c', 'd'],
+        spatialReference:{
+            projection:'EPSG:3857'
+        }
     })
 });
 

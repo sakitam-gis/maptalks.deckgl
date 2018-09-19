@@ -1,13 +1,14 @@
-import LayerManager from './layer-manager';
 import { Stats } from 'probe.gl';
 import GL from 'luma.gl/constants';
 import { trackContextState, setParameters } from 'luma.gl';
-import ViewManager from '@deck.gl/core/dist/esm/lib/view-manager';
-import MapView from '@deck.gl/core/dist/esm/views/map-view';
 import EffectManager from '@deck.gl/core/dist/esm/experimental/lib/effect-manager';
 import Effect from '@deck.gl/core/dist/esm/experimental/lib/effect';
 import log from '@deck.gl/core/dist/esm/utils/log';
 import VENDOR_PREFIX from '@deck.gl/core/dist/esm/utils/css-vendor-prefix';
+
+import ViewManager from './view-manager';
+import MapView from './views/map-view';
+import LayerManager from './layer-manager';
 
 function noop() {}
 
@@ -275,7 +276,7 @@ export default class Deck {
     // Get the view descriptor list
     _getViews(props) {
         // Default to a full screen map view port
-        let views = props.views || [new MapView({ id: 'default-view' })];
+        let views = props.views || [new MapView({ id: 'default-view', targetMap: props.targetMap })];
         views = Array.isArray(views) ? views : [views];
         if (views.length && props.controller) {
             // Backward compatibility: support controller prop
