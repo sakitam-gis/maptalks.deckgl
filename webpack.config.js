@@ -7,8 +7,8 @@ const CONFIG = {
     entry: {
         // app1: resolve('src/index.js'),
         // app2: resolve('examples/HexagonLayer.js'),
-        app3: resolve('examples/highway.js'),
-        // app4: resolve('examples/trips.js'),
+        // app3: resolve('examples/highway.js'),
+        app4: resolve('examples/trips.js'),
         // app5: resolve('examples/brushing/index.js'),
     },
 
