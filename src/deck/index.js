@@ -10,7 +10,8 @@ import ViewManager from './view-manager';
 import MapView from './views/map-view';
 import LayerManager from './layer-manager';
 
-function noop() {}
+function noop() {
+}
 
 const PREFIX = VENDOR_PREFIX === '-webkit-' ? VENDOR_PREFIX : '';
 
@@ -173,8 +174,9 @@ export default class Deck {
         if (clearRedrawFlags) {
             this._needsRedraw = false;
         }
-        redraw = redraw || this.viewManager.needsRedraw({ clearRedrawFlags });
-        redraw = redraw || this.layerManager.needsRedraw({ clearRedrawFlags });
+        const viewManagerNeedsRedraw = this.viewManager.needsRedraw({ clearRedrawFlags });
+        const layerManagerNeedsRedraw = this.layerManager.needsRedraw({ clearRedrawFlags });
+        redraw = redraw || viewManagerNeedsRedraw || layerManagerNeedsRedraw;
         return redraw;
     }
 
@@ -325,8 +327,9 @@ export default class Deck {
         if (this.layerManager) {
             return;
         }
+
         // if external context...
-        if (this.props._customRender) {
+        if (!this.canvas) {
             this.canvas = gl.canvas;
             trackContextState(gl, { enable: true, copyState: true });
         }
@@ -358,51 +361,61 @@ export default class Deck {
         this.props.onLoad();
     }
 
-    _drawLayers(animationProps = {}) {
+    _drawLayers(redrawReason) {
         const { gl } = this.layerManager.context;
-        // Log perf stats every second
-        if (this.stats.oneSecondPassed()) {
-            const table = this.stats.getStatsTable();
-            this.stats.reset();
-            log.table(3, table)();
-        }
-        this._updateCanvasSize();
-        this._updateCursor();
-        this.layerManager.updateLayers();
-        this.stats.bump('fps');
-        // Needs to be done before drawing
-        this._updateAnimationProps(animationProps);
-        // Check if we need to redraw
-        const redrawReason = this.needsRedraw({ clearRedrawFlags: true });
-        if (!redrawReason) {
-            return;
-        }
-        // Do the redraw
-        this.stats.bump('render-fps');
-
         setParameters(gl, this.props.parameters);
-
         this.props.onBeforeRender({ gl });
-
         this.layerManager.drawLayers({
             pass: 'screen',
             viewports: this.viewManager.getViewports(),
             views: this.viewManager.getViews(),
             redrawReason,
             drawPickingColors: this.props.drawPickingColors, // Debug picking, helps in framebuffered layers
-            customRender: this.props._customRender
+            customRender: Boolean(this.props._customRender)
         });
 
         this.props.onAfterRender({ gl });
     }
 
     // Callbacks
+
     _onRendererInitialized({ gl }) {
         this._setGLContext(gl);
     }
 
     _onRenderFrame(animationProps) {
-        this._drawLayers(animationProps);
+        // Log perf stats every second
+        if (this.stats.oneSecondPassed()) {
+            const table = this.stats.getStatsTable();
+            this.stats.reset();
+            log.table(3, table)();
+        }
+
+        this._updateCanvasSize();
+
+        this._updateCursor();
+
+        // Update layers if needed (e.g. some async prop has loaded)
+        // Note: This can trigger a redraw
+        this.layerManager.updateLayers();
+
+        this.stats.bump('fps');
+
+        // Needs to be done before drawing
+        this._updateAnimationProps(animationProps);
+
+        // Check if we need to redraw
+        const redrawReason = this.needsRedraw({ clearRedrawFlags: true });
+        if (!redrawReason) {
+            return;
+        }
+
+        this.stats.bump('render-fps');
+        if (this.props._customRender) {
+            this.props._customRender();
+        } else {
+            this._drawLayers(redrawReason);
+        }
     }
 
     // Callbacks

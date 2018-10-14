@@ -26,6 +26,18 @@ const getGLViewport = (gl, { viewport, pixelRatio }) => {
     ];
 };
 
+// Helper functions
+
+function clearCanvas(gl) {
+    // const pixelRatio = getPixelRatio({useDevicePixels});
+    const width = gl.drawingBufferWidth;
+    const height = gl.drawingBufferHeight;
+    // clear depth and color buffers, restoring transparency
+    withParameters(gl, { viewport: [0, 0, width, height] }, () => {
+        gl.clear('0x00004000' | '0x00000100');
+    });
+}
+
 // Draw a list of layers in a list of viewports
 export function drawLayers(
     gl,
@@ -41,9 +53,14 @@ export function drawLayers(
         layerFilter = null,
         pass = 'draw',
         redrawReason = '',
-        stats
+        stats,
+        customRender
     }
 ) {
+    if (!customRender) {
+        clearCanvas(gl, { useDevicePixels });
+    }
+
     // effectManager.preDraw();
 
     viewports.forEach((viewportOrDescriptor) => {
@@ -132,6 +149,7 @@ function drawLayersInViewport(
         view,
         useDevicePixels,
         drawPickingColors = false,
+        deviceRect = null, // eslint-disable-line
         parameters = {},
         layerFilter,
         pass = 'draw',
@@ -207,6 +225,7 @@ function drawLayersInViewport(
 }
 
 function drawLayerInViewport({
+    gl, // eslint-disable-line
     layer,
     layerIndex,
     drawPickingColors,

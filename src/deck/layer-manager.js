@@ -33,11 +33,7 @@ const INITIAL_CONTEXT = Object.seal({
     shaderCache: null,
     pickingFBO: null, // Screen-size framebuffer that layers can reuse
     // State
-    lastPickedInfo: {
-        // For callback tracking and autohighlight
-        index: -1,
-        layerId: null
-    },
+    lastPickedInfo: null,
     animationProps: null,
     userData: {} // Place for any custom app `context`
 });
@@ -53,7 +49,12 @@ export default class LayerManager {
             gl,
             // Enabling luma.gl Program caching using private API (_cachePrograms)
             shaderCache: new ShaderCache({ gl, _cachePrograms: true }),
-            stats: stats || new Stats({ id: 'deck.gl' })
+            stats: stats || new Stats({ id: 'deck.gl' }),
+            lastPickedInfo: {
+                // For callback tracking and autohighlight
+                index: -1,
+                layerId: null
+            }
         });
         this.layerFilter = null;
         this.drawPickingColors = false;
