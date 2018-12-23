@@ -1,13 +1,8 @@
 import * as React from 'react';
-import { Map, View } from 'ol';
-import TileLayer from 'ol/layer/Tile';
-import 'ol/ol.css';
-import '../assets/style/art.scss'
-import OSM from 'ol/source/OSM';
-import { fromLonLat } from 'ol/proj';
 import DeckGLLayer from '../../src';
 import { PolygonLayer } from '@deck.gl/layers';
 import { TripsLayer } from '@deck.gl/experimental-layers';
+import * as maptalks from 'maptalks';
 
 class Index extends React.Component {
   constructor (props, context) {
@@ -26,24 +21,26 @@ class Index extends React.Component {
   }
 
   componentDidMount () {
-    this.map = new Map({
-      target: this.container,
-      layers: [
-        new TileLayer({
-          preload: 4,
-          source: new OSM({
-            url: 'https://cartodb-basemaps-{a-d}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png'
-          })
-        })
-      ],
-      loadTilesWhileAnimating: true,
-      view: new View({
-        center: fromLonLat([-74, 40.72]),
-        zoom: 13
+    this.map = new maptalks.Map(this.container, {
+      center: [-74, 40.72],
+      zoom: 13,
+      pitch: 40.5,
+      bearing: 0,
+      centerCross: true,
+      baseLayer: new maptalks.TileLayer('tile', {
+        'urlTemplate': 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
+        'subdomains': ['a', 'b', 'c', 'd']
       })
     });
 
     this._animate();
+  }
+
+  componentWillUnmount () {
+    // this.map.remove()
+    if (this.deckLayer) {
+      this.deckLayer.remove()
+    }
   }
 
   _animate = () => {
@@ -87,10 +84,9 @@ class Index extends React.Component {
     };
     if (!this.inited) {
       this.inited = true;
-      this.deckLayer = new DeckGLLayer(props, {
-        map: this.map,
-        animation: true,
-        projection: 'EPSG:3857'
+      this.deckLayer = new DeckGLLayer('deck', props, {
+        'animation': true,
+        'renderer': 'webgl'
       });
       this.map.addLayer(this.deckLayer);
     } else if (this.deckLayer) {

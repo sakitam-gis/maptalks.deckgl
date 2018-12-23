@@ -4,27 +4,41 @@
     "link": "/building",
     "chart_name": "Building",
     "chart_author": "FDD",
-    "chart_time": "2018.10.14"
+    "chart_time": "2018.12.23"
   },
   {
     "imgSrc": "./static/images/building.gif",
     "link": "/highway",
     "chart_name": "高速",
     "chart_author": "FDD",
-    "chart_time": "2018.10.14"
+    "chart_time": "2018.12.23"
   },
   {
     "imgSrc": "./static/images/building.gif",
     "link": "/hexagon",
     "chart_name": "面状",
     "chart_author": "FDD",
-    "chart_time": "2018.10.14"
+    "chart_time": "2018.12.23"
   },
   {
     "imgSrc": "./static/images/building.gif",
     "link": "/brushing",
     "chart_name": "brushing",
     "chart_author": "FDD",
-    "chart_time": "2018.10.14"
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./static/images/building.gif",
+    "link": "/polygon",
+    "chart_name": "polygon",
+    "chart_author": "FDD",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./static/images/building.gif",
+    "link": "/vector",
+    "chart_name": "vector",
+    "chart_author": "FDD",
+    "chart_time": "2018.12.23"
   }
 ]

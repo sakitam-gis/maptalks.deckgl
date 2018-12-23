@@ -1,11 +1,14 @@
 import React from 'react'; // eslint-disable-line
 import { Route, Switch, Redirect } from 'react-router-dom'; // eslint-disable-line
+import 'maptalks/dist/maptalks.css';
+import '../assets/style/art.scss';
 import Index from '../pages/Index';
 import Brushing from '../pages/Brushing';
 import Building from '../pages/Building';
 import Highway from '../pages/Highway';
 import HexagonLayer from '../pages/HexagonLayer';
 import Vector from '../pages/Vector';
+import Polygon from '../pages/Polygon';
 
 const mainRouter = [
   {
@@ -54,6 +57,14 @@ const mainRouter = [
     route: {
       path: '/vector',
       component: Vector
+    }
+  },
+  {
+    name: 'polygon',
+    key: 'polygon',
+    route: {
+      path: '/polygon',
+      component: Polygon
     }
   }
 ];

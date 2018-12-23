@@ -1,13 +1,8 @@
 import * as React from 'react';
-import { Map, View } from 'ol';
-import TileLayer from 'ol/layer/Tile';
-import 'ol/ol.css';
-import '../assets/style/art.scss'
-import OSM from 'ol/source/OSM';
-import { fromLonLat } from 'ol/proj';
 import DeckGLLayer from '../../src';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { scaleLinear, scaleThreshold } from 'd3-scale';
+import * as maptalks from 'maptalks';
 
 const COLOR_SCALE = scaleThreshold()
   .domain([0, 4, 8, 12, 20, 32, 52, 84, 136, 220])
@@ -46,18 +41,21 @@ class Index extends React.Component {
   }
 
   componentDidMount () {
-    this.map = new Map({
-      target: this.container,
-      layers: [
-        new TileLayer({
-          preload: 4,
-          source: new OSM()
-        })
-      ],
-      loadTilesWhileAnimating: true,
-      view: new View({
-        center: fromLonLat([-100, 38]),
-        zoom: 6
+    this.map = new maptalks.Map(this.container, {
+      center: [-100, 38],
+      zoom: 6.6,
+      pitch: 40.5,
+      bearing: -27.396674584323023,
+      centerCross: true,
+      spatialReference: {
+        projection: 'EPSG:3857'
+      },
+      baseLayer: new maptalks.TileLayer('tile', {
+        'urlTemplate': 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
+        'subdomains': ['a', 'b', 'c', 'd'],
+        spatialReference: {
+          projection: 'EPSG:3857'
+        }
       })
     });
 
@@ -66,7 +64,7 @@ class Index extends React.Component {
       const accidents = response;
       if (!error) {
         const { fatalities, incidents } = this._aggregateAccidents(accidents);
-        this.deckLayer = new DeckGLLayer({
+        this.deckLayer = new DeckGLLayer('deck', {
           'layers': [
             new GeoJsonLayer({
               id: 'geojson',
@@ -93,12 +91,20 @@ class Index extends React.Component {
             })
           ]
         }, {
-          map: this.map,
-          projection: 'EPSG:3857'
+          'animation': true,
+          'renderer': 'webgl'
         });
+
         this.map.addLayer(this.deckLayer);
       }
     });
+  }
+
+  componentWillUnmount () {
+    // this.map.remove()
+    if (this.deckLayer) {
+      this.deckLayer.remove()
+    }
   }
 
   getKey ({ state, type, id }) {
