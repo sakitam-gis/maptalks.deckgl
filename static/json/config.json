@@ -1,0 +1,51 @@
+[
+  {
+    "imgSrc": "./static/images/building.gif",
+    "link": "/building",
+    "chart_name": "Building",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./static/images/highway.jpg",
+    "link": "/highway",
+    "chart_name": "高速",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./static/images/hexagon.jpg",
+    "link": "/hexagon",
+    "chart_name": "面状",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./static/images/brushing.jpg",
+    "link": "/brushing",
+    "chart_name": "brushing",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./static/images/polygon.jpg",
+    "link": "/polygon",
+    "chart_name": "polygon",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./static/images/vector.jpg",
+    "link": "/vector",
+    "chart_name": "vector",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./static/images/linelayer.jpg",
+    "link": "/linelayer",
+    "chart_name": "linelayer",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  }
+]
