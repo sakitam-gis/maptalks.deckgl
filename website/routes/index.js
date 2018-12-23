@@ -9,6 +9,7 @@ import Highway from '../pages/Highway';
 import HexagonLayer from '../pages/HexagonLayer';
 import Vector from '../pages/Vector';
 import Polygon from '../pages/Polygon';
+import LineLayer from '../pages/LineLayer';
 
 const mainRouter = [
   {
@@ -65,6 +66,14 @@ const mainRouter = [
     route: {
       path: '/polygon',
       component: Polygon
+    }
+  },
+  {
+    name: 'linelayer',
+    key: 'linelayer',
+    route: {
+      path: '/linelayer',
+      component: LineLayer
     }
   }
 ];

@@ -1,10 +1,12 @@
 import * as React from 'react';
 import DeckGLLayer from '../../src';
-import DCTileLayer from '@deck.gl/experimental-layers/dist/esm/tile-layer/tile-layer';
+import { TileLayer } from '@deck.gl/experimental-layers';
 // import { GeoJsonLayer } from '@deck.gl/layers';
 import { VectorTile } from '@mapbox/vector-tile';
 import Protobuf from 'pbf';
 import * as maptalks from 'maptalks';
+
+const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA';
 
 // const MAPBOX_TOKEN = 'pk.eyJ1IjoiemhlbmZ1IiwiYSI6ImNpb284bzNoYzAwM3h1Ym02aHlrand6OTAifQ.sKX-XKJMmgtk_oI5oIUV_g';
 // const GEOJSON = {
@@ -17,7 +19,7 @@ import * as maptalks from 'maptalks';
 // }
 
 function getTileData ({ x, y, z }) {
-  const mapSource = `http://minedata.cn/datademo/dynamicdemo/zhonghuan_recent4/4/${z}/${x}/${y}`;
+  const mapSource = `https://a.tiles.mapbox.com/v4/mapbox.mapbox-streets-v7/${z}/${x}/${y}.vector.pbf?access_token=${MAPBOX_TOKEN}`;
   return fetch(mapSource)
     .then(response => response.arrayBuffer())
     .then(buffer => vectorTileToGeoJSON(buffer, x, y, z));
@@ -66,11 +68,19 @@ class Index extends React.Component {
       })
     });
 
-    const layer = new DCTileLayer({
+    const layer = new TileLayer({
       stroked: false,
       getLineColor: [192, 192, 192],
-      getFillColor: [140, 170, 180],
-      getColor: [140, 170, 180],
+      getFillColor: f => {
+        switch (f.properties.layer) {
+          case 'water':
+            return [140, 170, 180];
+          case 'landcover':
+            return [120, 190, 100];
+          default:
+            return [218, 218, 218];
+        }
+      },
       getTileData
     });
     this.deckLayer = new DeckGLLayer('deck', {

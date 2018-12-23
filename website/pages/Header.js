@@ -1,5 +1,5 @@
 import React, { Component } from 'react'; // eslint-disable-line
-import logo from '../assets/images/logo.png';
+// import logo from '../assets/images/logo.png';
 import github from '../assets/images/github.png';
 import '../assets/style/header.scss';
 
@@ -29,20 +29,20 @@ class Header extends Component {
   render () {
     return (
       <div className="header clearfix" onClick={event => this.handleDefEvent(event)}>
-        <div className="navbar-header">
+        {/* <div className="navbar-header">
           <a href="" className="navbar-brand">
             <img src={logo} alt="logo" className="navbar-logo" />
           </a>
-        </div>
+        </div> */}
         <div className="navbar-collapse clearfix">
-          <ul className="nav navbar-nav navbar-left clearfix">
+          {/* <ul className="nav navbar-nav navbar-left clearfix">
             <li id="nav-index">
               <a href="./">首页</a>
             </li>
             <li id="nav-doc" className="dropdown">
               <a href="./docs/" target="_blank" onClick={event => this.openDocs(event)}>文档</a>
             </li>
-          </ul>
+          </ul> */}
           <ul className="nav navbar-nav navbar-right">
             <li id="nav-github">
               <a href="https://github.com/sakitam-fdd/ol-deckgl" target="_blank">
