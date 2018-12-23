@@ -16,22 +16,6 @@ const createContext = function (canvas, glOptions = {}) {
     return gl;
 };
 
-let venderPrefix = '';
-
-// Get CSS vendor prefix
-try {
-    const styleObj = document.createElement('div').style;
-    const prefix = /^(webkit|moz|ms|o)(?=[A-Z])/;
-    for (const key in styleObj) {
-        if (prefix.test(key)) {
-            venderPrefix = `-${key.match(prefix)[0]}-`;
-            break;
-        }
-    }
-} catch (error) {
-    // document not available
-}
-
 /**
  * create canvas
  * @param width
@@ -57,6 +41,5 @@ const createCanvas = (width, height, scaleFactor, Canvas) => {
 
 export {
     createContext,
-    venderPrefix,
     createCanvas
 }

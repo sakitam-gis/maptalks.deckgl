@@ -1,3 +1,6 @@
+build/*.js
+config/*.js
 test/**/*.js
 dist/
-src/deck.gl/
+node_modules/
+packages/**/node_modules/

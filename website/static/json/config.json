@@ -1,0 +1,30 @@
+[
+  {
+    "imgSrc": "./static/images/building.gif",
+    "link": "/building",
+    "chart_name": "Building",
+    "chart_author": "FDD",
+    "chart_time": "2018.10.14"
+  },
+  {
+    "imgSrc": "./static/images/building.gif",
+    "link": "/highway",
+    "chart_name": "高速",
+    "chart_author": "FDD",
+    "chart_time": "2018.10.14"
+  },
+  {
+    "imgSrc": "./static/images/building.gif",
+    "link": "/hexagon",
+    "chart_name": "面状",
+    "chart_author": "FDD",
+    "chart_time": "2018.10.14"
+  },
+  {
+    "imgSrc": "./static/images/building.gif",
+    "link": "/brushing",
+    "chart_name": "brushing",
+    "chart_author": "FDD",
+    "chart_time": "2018.10.14"
+  }
+]
