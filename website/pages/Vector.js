@@ -42,7 +42,7 @@ import * as maptalks from 'maptalks';
 // }
 
 function getTileData ({ x, y, z }) {
-  const url = `http://localhost:3333/osm?z=${z}&x=${x}&y=${y}`
+  const url = `http://58.87.95.84:3333/osm?z=${z}&x=${x}&y=${y}`
   return axios.get(url, {
     headers: {
       'Pragma': 'cache'
