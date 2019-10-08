@@ -1,15 +1,32 @@
-import * as maptalks from 'maptalks';
-import Renderer from './renderer';
-import { Deck } from '@deck.gl/core';
+import { Deck, WebMercatorViewport } from '@deck.gl/core';
+
+import {
+  Canvas as canvas2d,
+  CanvasLayer,
+  renderer,
+} from 'maptalks';
+import {
+  addLayer, drawLayer,
+  getDeckInstance, removeLayer,
+  updateLayer
+} from './deck-utils';
+import { createContext } from './utils';
 
 const _options = {
-  'renderer': 'webgl',
-  'doubleBuffer': true,
-  'glOptions': {
-    'alpha': true,
-    'antialias': true,
-    'preserveDrawingBuffer': true
-  }
+  renderer: 'webgl',
+  doubleBuffer: true,
+  glOptions: {
+    alpha: true,
+    antialias: true,
+    preserveDrawingBuffer: true
+  },
+  forceRenderOnMoving: true,
+  forceRenderOnZooming: true,
+};
+
+const originProps = {
+  useDevicePixels: true,
+  autoResizeDrawingBuffer: true,
 };
 
 // from https://github.com/maptalks/maptalks.mapboxgl/blob/5db0b124981f59e597ae66fb68c9763c53578ac2/index.js#L201
@@ -19,46 +36,34 @@ function getZoom (res) {
   return 19 - Math.log(res / MAX_RES) / Math.LN2;
 }
 
-function handleMouseEvent (deck, event) {
-  // reset layerFilter to allow all layers during picking
-  deck.layerManager.layerFilter = null;
-  let callback;
-  switch (event.type) {
-    case 'click':
-      callback = deck._onClick;
-      break;
-
-    case 'mousemove':
-    case 'pointermove':
-      callback = deck._onPointerMove;
-      break;
-
-    case 'mouseleave':
-    case 'pointerleave':
-      callback = deck._onPointerLeave;
-      break;
-
-    default:
-      return;
-  }
-  if (!event.offsetCenter) {
-    // Map from mapbox's MapMouseEvent object to mjolnir.js' Event object
-    event = {
-      offsetCenter: event.point,
-      srcEvent: event.originalEvent
-    };
-  }
-  callback(event);
+function getViewState (map) {
+  const res = map.getResolution();
+  const maxZoom = map.getMaxNativeZoom();
+  const center = map.getCenter();
+  const pitch = map.getPitch();
+  const bearing = map.getBearing();
+  return {
+    latitude: center.y,
+    longitude: center.x,
+    zoom: getZoom(res),
+    bearing,
+    pitch,
+    maxZoom
+  };
 }
 
-class DeckGLLayer extends maptalks.CanvasLayer {
-  static getTargetZoom (map) {
-    return map.getMaxNativeZoom();
-  }
-
+class DeckGLLayer extends CanvasLayer {
   constructor (id, props, options = {}) {
     super(id, Object.assign(_options, options));
+    props.id = id;
     this.props = props;
+
+    /**
+     * layer is load
+     * @type {boolean}
+     * @private
+     */
+    this._isLoad = false;
   }
 
   /**
@@ -67,7 +72,11 @@ class DeckGLLayer extends maptalks.CanvasLayer {
    * @returns {DeckGLLayer}
    */
   setProps (props) {
-    this.props = Object.assign(this.props, props);
+    Object.assign(this.props, props, { id: this.id });
+    // safe guard in case setProps is called before onAdd
+    if (this.deck) {
+      updateLayer(this.deck, this);
+    }
     return this;
   }
 
@@ -79,101 +88,200 @@ class DeckGLLayer extends maptalks.CanvasLayer {
     return this.props;
   }
 
+  prepareToDraw () {}
+
   draw () {
-    this.renderScene();
+    this.renderLayer();
   }
 
   drawOnInteracting () {
-    this.renderScene();
+    this.renderLayer();
   }
 
-  _getViewState () {
+  onAdd () {
+    // const map = this.getMap();
+  }
+
+  onRemove () {
+    removeLayer(this.deck, this);
+  }
+
+  renderLayer () {
     const map = this.getMap();
-    const res = map.getResolution();
-    const maxZoom = DeckGLLayer.getTargetZoom(map);
-    const center = map.getCenter();
-    const pitch = map.getPitch();
-    const bearing = map.getBearing();
-    return {
-      latitude: center['y'],
-      longitude: center['x'],
-      zoom: getZoom(res),
-      bearing: bearing,
-      pitch: pitch,
-      maxZoom: maxZoom
-    }
-  }
-
-  renderScene () {
-    const map = this.getMap()
     const renderer = this._getRenderer();
-    const viewState = this._getViewState();
-    const { layers } = this.props;
-    if (this.deck) {
-      this.deck.setProps({
-        viewState,
-        layers,
-        targetMap: map
-      });
-      this.deck._drawLayers();
-    } else {
-      if (!renderer.gl) return;
-      this.deck = new Deck({
-        // width: false,
-        // height: false,
-        width: '100%',
-        height: '100%',
-        autoResizeDrawingBuffer: false,
-        // _customRender: () => this.setCanvasUpdated(),
-        _customRender: () => {},
-        parameters: {
-          depthMask: true,
-          depthTest: true
-        },
-        viewState: viewState,
-        glOptions: {
-          'alpha': true,
-          'antialias': true,
-          'preserveDrawingBuffer': true
+
+    const customRender = this.props._customRender;
+
+    const { gl } = renderer;
+
+    const deckProps = Object.assign({}, originProps, {
+      gl,
+      width: false,
+      height: false,
+      viewState: getViewState(map),
+      _customRender: () => {
+        this._getRenderer() && this.requestMapToRender();
+        if (customRender) {
+          // customRender may be subscribed by DeckGL React component to update child props
+          // make sure it is still called
+          customRender();
         }
-      });
-      this.deck._setGLContext(renderer.gl);
-      this.deck.setProps({
-        layers: layers,
-        targetMap: map
-      });
-      this.initEvents(map, this.deck)
+      },
+      // TODO: import these defaults from a single source of truth
+      parameters: {
+        depthMask: true,
+        depthTest: true,
+        blendFunc: [
+          gl.SRC_ALPHA,
+          gl.ONE_MINUS_SRC_ALPHA,
+          gl.ONE,
+          gl.ONE_MINUS_SRC_ALPHA
+        ],
+        blendEquation: gl.FUNC_ADD
+      },
+      userData: {
+        isExternal: false,
+        layers: new Set()
+      },
+      onLoad: () => {
+        this._isLoad = true;
+        drawLayer(this.deck, map, this);
+      }
+    });
+
+    if (!this.deck && !this._isLoad) {
+      this.deck = new Deck(deckProps)
     }
+
+    if (this._isLoad) {
+      // drawLayer(this.deck, map, this);
+      this.deck.setProps(deckProps);
+      this.deck.props.userData.isExternal = true;
+    }
+
     renderer.completeRender();
   }
 
-  initEvents (map, deck) {
-    const pickingEventHandler = event => handleMouseEvent(deck, event);
-    if (deck.eventManager) {
-      // Replace default event handlers with our own ones
-      deck.eventManager.off({
-        click: deck._onClick,
-        pointermove: deck._onPointerMove,
-        pointerleave: deck._onPointerLeave
-      });
-      deck.eventManager.on({
-        click: pickingEventHandler,
-        pointermove: pickingEventHandler,
-        pointerleave: pickingEventHandler
-      });
-    } else {
-      map.on('click', pickingEventHandler);
-      map.on('mousemove', pickingEventHandler);
-      map.on('mouseleave', pickingEventHandler);
+  remove () {
+    if (this.deck) {
+      this.deck.finalize();
+      delete this.deck;
+    }
+    super.remove();
+  }
+}
+
+class Renderer extends renderer.CanvasLayerRenderer {
+  draw () {
+    this.prepareCanvas();
+    this.prepareDrawContext();
+    this._drawLayer();
+  }
+
+  /**
+   * tell layer redraw
+   * @returns {*}
+   */
+  needToRedraw () {
+    const map = this.getMap();
+    if (map.isZooming() && !map.getPitch()) {
+      return false;
+    }
+    return super.needToRedraw();
+  }
+  //
+  // /**
+  //  * listen canvas create
+  //  */
+  // onCanvasCreate () {
+  //   const map = this.getMap();
+  //   if (this.canvas && this.layer.options.doubleBuffer) {
+  //     this.buffer = canvas2d.createCanvas(this.canvas.width, this.canvas.height, map.CanvasClass);
+  //     this.context = this.buffer.getContext('2d');
+  //   }
+  // }
+
+  /**
+   * create canvas
+   */
+  createCanvas () {
+    if (this.canvas) return;
+    if (!this.canvas) {
+      const map = this.getMap();
+      const size = map.getSize();
+      const width = size.width;
+      const height = size.height;
+      // const retina = map.getDevicePixelRatio() || 1;
+      // const [width, height] = [retina * size.width, retina * size.height];
+      this.canvas = canvas2d.createCanvas(width, height, map.CanvasClass);
+      if (this.canvas.style) {
+        this.canvas.style.width = size.width + 'px';
+        this.canvas.style.height = size.height + 'px';
+      }
+      this.gl = createContext(this.canvas, this.layer.options.glOptions);
+      this.onCanvasCreate();
+      this.layer.fire('canvascreate', { context: this.context, gl: this.gl });
     }
   }
 
+  /**
+   * when map changed, call canvas change
+   * @param canvasSize
+   */
+  resizeCanvas (canvasSize) {
+    // eslint-disable-next-line no-useless-return
+    if (!this.canvas) return;
+    // const map = this.getMap();
+    // const retina = map.getDevicePixelRatio() || 1;
+    // const size = canvasSize || map.getSize();
+    // this.canvas.height = retina * size.height;
+    // this.canvas.width = retina * size.width;
+    // this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  /**
+   * clear canvas
+   */
+  clearCanvas () {
+    if (!this.canvas) return;
+    // eslint-disable-next-line no-bitwise
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+    if (this.context) {
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+  }
+
+  requestMapToRender () {
+    this.setToRedraw();
+  }
+
+  prepareCanvas () {
+    if (!this.canvas) {
+      this.createCanvas();
+    } else {
+      this.clearCanvas();
+    }
+    const mask = super.prepareCanvas();
+    this.layer.fire('renderstart', { context: this.context, gl: this.gl });
+    return mask;
+  }
+
+  onZoomStart (...args) {
+    super.onZoomStart(args);
+  }
+
+  onZoomEnd (...args) {
+    super.onZoomEnd(args);
+  }
+
   remove () {
-    this.deck.finalize();
     super.remove();
   }
 }
 
 DeckGLLayer.registerRenderer('webgl', Renderer);
 
-export default DeckGLLayer;
+export {
+  DeckGLLayer,
+  Renderer as DeckGLRender
+};

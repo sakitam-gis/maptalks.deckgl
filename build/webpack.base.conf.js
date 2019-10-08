@@ -17,7 +17,10 @@ module.exports = {
       '.js',
       '.jsx',
       '.json'
-    ]
+    ],
+    alias: {
+      'react-dom': '@hot-loader/react-dom' // https://github.com/gatsbyjs/gatsby/issues/11934
+    }
   },
   module: {
     rules: [

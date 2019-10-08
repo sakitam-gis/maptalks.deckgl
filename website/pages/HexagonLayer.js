@@ -1,6 +1,6 @@
 import * as React from 'react';
-import DeckGLLayer from '../../src';
-import { HexagonLayer } from '@deck.gl/layers';
+import { DeckGLLayer } from '../../src';
+import { H3HexagonLayer } from '@deck.gl/geo-layers';
 import * as maptalks from 'maptalks';
 
 const DATA_URL =

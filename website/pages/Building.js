@@ -1,7 +1,7 @@
 import * as React from 'react';
-import DeckGLLayer from '../../src';
+import { DeckGLLayer } from '../../src';
 import { PolygonLayer } from '@deck.gl/layers';
-import { TripsLayer } from '@deck.gl/experimental-layers';
+import { TripsLayer } from '@deck.gl/geo-layers';
 import * as maptalks from 'maptalks';
 
 class Index extends React.Component {
@@ -28,8 +28,8 @@ class Index extends React.Component {
       bearing: 0,
       centerCross: true,
       baseLayer: new maptalks.TileLayer('tile', {
-        'urlTemplate': 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
-        'subdomains': ['a', 'b', 'c', 'd']
+        urlTemplate: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
+        subdomains: ['a', 'b', 'c', 'd']
       })
     });
 
@@ -49,8 +49,8 @@ class Index extends React.Component {
     const loopTime = loopLength / animationSpeed;
     const time = ((timestamp % loopTime) / loopTime) * loopLength;
     const layers = [
-      new TripsLayer({
-        id: 'trips',
+      {
+        type: TripsLayer,
         data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/trips.json',
         getPath: d => d.segments,
         getColor: d => (d.vendor === 0 ? [253, 128, 93] : [23, 184, 190]),
@@ -58,9 +58,9 @@ class Index extends React.Component {
         strokeWidth: 2,
         trailLength: 180,
         currentTime: time
-      }),
-      new PolygonLayer({
-        id: 'buildings',
+      },
+      {
+        type: PolygonLayer,
         data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/buildings.json',
         extruded: true,
         wireframe: false,
@@ -77,20 +77,25 @@ class Index extends React.Component {
           lightsStrength: [2.0, 0.0, 0.0, 0.0],
           numberOfLights: 2
         }
-      })
+      }
     ];
-    const props = {
-      layers: layers
-    };
     if (!this.inited) {
       this.inited = true;
-      this.deckLayer = new DeckGLLayer('deck', props, {
-        'animation': true,
-        'renderer': 'webgl'
+
+      this.tripsLayer = new DeckGLLayer('tripsLayer', layers[0], {
+        animation: true,
+        renderer: 'webgl'
       });
-      this.map.addLayer(this.deckLayer);
+
+      this.polygonLayer = new DeckGLLayer('polygonLayer', layers[1], {
+        animation: true,
+        renderer: 'webgl'
+      });
+      this.map.addLayer(this.tripsLayer);
+      this.map.addLayer(this.polygonLayer);
     } else if (this.deckLayer) {
-      this.deckLayer.setProps(props);
+      this.tripsLayer.setProps(layers[0]);
+      this.polygonLayer.setProps(layers[1]);
     }
     window.requestAnimationFrame(this._animate);
   };
@@ -100,7 +105,7 @@ class Index extends React.Component {
   };
 
   render () {
-    return (<div ref={this.setRef} className="map-content"></div>);
+    return (<div ref={this.setRef} className="map-content"/>);
   }
 }
 
