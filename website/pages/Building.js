@@ -28,8 +28,8 @@ class Index extends React.Component {
       bearing: 0,
       centerCross: true,
       baseLayer: new maptalks.TileLayer('tile', {
-        urlTemplate: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
-        subdomains: ['a', 'b', 'c', 'd']
+        urlTemplate: '//google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}'
+        // subdomains: ['a', 'b', 'c', 'd']
       })
     });
 
@@ -49,8 +49,8 @@ class Index extends React.Component {
     const loopTime = loopLength / animationSpeed;
     const time = ((timestamp % loopTime) / loopTime) * loopLength;
     const layers = [
-      {
-        type: TripsLayer,
+      new TripsLayer({
+        id: 'trips',
         data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/trips.json',
         getPath: d => d.segments,
         getColor: d => (d.vendor === 0 ? [253, 128, 93] : [23, 184, 190]),
@@ -58,9 +58,9 @@ class Index extends React.Component {
         strokeWidth: 2,
         trailLength: 180,
         currentTime: time
-      },
-      {
-        type: PolygonLayer,
+      }),
+      new PolygonLayer({
+        id: 'buildings',
         data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/buildings.json',
         extruded: true,
         wireframe: false,
@@ -77,25 +77,20 @@ class Index extends React.Component {
           lightsStrength: [2.0, 0.0, 0.0, 0.0],
           numberOfLights: 2
         }
-      }
+      })
     ];
+    const props = {
+      layers: layers
+    };
     if (!this.inited) {
       this.inited = true;
-
-      this.tripsLayer = new DeckGLLayer('tripsLayer', layers[0], {
+      this.deckLayer = new DeckGLLayer('deck', props, {
         animation: true,
         renderer: 'webgl'
       });
-
-      this.polygonLayer = new DeckGLLayer('polygonLayer', layers[1], {
-        animation: true,
-        renderer: 'webgl'
-      });
-      this.map.addLayer(this.tripsLayer);
-      this.map.addLayer(this.polygonLayer);
+      this.map.addLayer(this.deckLayer);
     } else if (this.deckLayer) {
-      this.tripsLayer.setProps(layers[0]);
-      this.polygonLayer.setProps(layers[1]);
+      this.deckLayer.setProps(props);
     }
     window.requestAnimationFrame(this._animate);
   };
