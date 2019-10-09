@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DeckGLLayer } from '../../src';
+import DeckGLLayer from '../../src';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import * as maptalks from 'maptalks';
 import { getDevicePixelRatio } from '../../src/utils';

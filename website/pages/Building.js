@@ -1,5 +1,5 @@
 import React from 'react';
-import { DeckGLLayer } from '../../src';
+import DeckGLLayer from '../../src';
 import { PolygonLayer } from '@deck.gl/layers';
 import { TripsLayer } from '@deck.gl/geo-layers';
 import * as maptalks from 'maptalks';

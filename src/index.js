@@ -79,7 +79,6 @@ function getViewport (deck, map, useMapboxProjection = true) {
 class DeckGLLayer extends CanvasLayer {
   constructor (id, props, options = {}) {
     super(id, Object.assign(_options, options));
-    props.id = id;
     this.props = Object.assign({}, originProps, props);
 
     /**
@@ -313,7 +312,9 @@ class Renderer extends renderer.CanvasLayerRenderer {
 
 DeckGLLayer.registerRenderer('webgl', Renderer);
 
-export {
-  DeckGLLayer,
-  Renderer as DeckGLRender
-};
+// export {
+//   DeckGLLayer,
+//   Renderer as DeckGLRender
+// };
+
+export default DeckGLLayer;

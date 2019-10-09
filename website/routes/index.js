@@ -50,7 +50,7 @@ const mainRouter = [
     key: 'vector',
     route: {
       path: '/vector',
-      component: loadable(() => import(/* webpackChunkName: 'Brushing' */ '../pages/Vector'))
+      component: loadable(() => import(/* webpackChunkName: 'Vector' */ '../pages/Vector'))
     }
   },
   {
@@ -58,7 +58,7 @@ const mainRouter = [
     key: 'polygon',
     route: {
       path: '/polygon',
-      component: loadable(() => import(/* webpackChunkName: 'Brushing' */ '../pages/Polygon'))
+      component: loadable(() => import(/* webpackChunkName: 'Polygon' */ '../pages/Polygon'))
     }
   },
   {
@@ -66,7 +66,23 @@ const mainRouter = [
     key: 'linelayer',
     route: {
       path: '/linelayer',
-      component: loadable(() => import(/* webpackChunkName: 'Brushing' */ '../pages/LineLayer'))
+      component: loadable(() => import(/* webpackChunkName: 'LineLayer' */ '../pages/LineLayer'))
+    }
+  },
+  {
+    name: '3dtiles',
+    key: '3dtiles',
+    route: {
+      path: '/3dtiles',
+      component: loadable(() => import(/* webpackChunkName: '3DTiles' */ '../pages/3DTiles'))
+    }
+  },
+  {
+    name: 'icon-layer',
+    key: 'icon-layer',
+    route: {
+      path: '/icon-layer',
+      component: loadable(() => import(/* webpackChunkName: 'IconLayer' */ '../pages/IconLayer'))
     }
   }
 ];

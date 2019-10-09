@@ -3,7 +3,7 @@ import * as maptalks from 'maptalks';
 import { PhongMaterial } from '@luma.gl/core';
 import { AmbientLight, PointLight, LightingEffect } from '@deck.gl/core';
 import { HexagonLayer } from '@deck.gl/aggregation-layers';
-import { DeckGLLayer } from '../../src';
+import DeckGLLayer from '../../src';
 import { getDevicePixelRatio } from '../../src/utils';
 
 const DATA_URL =

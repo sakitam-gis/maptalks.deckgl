@@ -1,7 +1,7 @@
 import * as React from 'react';
 import axios from 'axios';
 import Color from 'color';
-import { DeckGLLayer } from '../../src';
+import DeckGLLayer from '../../src';
 import { TileLayer } from '@deck.gl/geo-layers';
 // import { GeoJsonLayer } from '@deck.gl/layers';
 // import { VectorTile } from '@mapbox/vector-tile';

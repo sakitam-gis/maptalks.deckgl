@@ -47,5 +47,19 @@
     "chart_name": "linelayer",
     "chart_author": "sakitam-fdd",
     "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./static/images/linelayer.jpg",
+    "link": "/3dtiles",
+    "chart_name": "3dtiles",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2019.10.07"
+  },
+  {
+    "imgSrc": "./static/images/linelayer.jpg",
+    "link": "/icon-layer",
+    "chart_name": "icon-layer",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2019.10.07"
   }
 ]

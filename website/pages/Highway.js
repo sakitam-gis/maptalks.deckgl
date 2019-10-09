@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DeckGLLayer } from '../../src';
+import DeckGLLayer from '../../src';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { scaleLinear, scaleThreshold } from 'd3-scale';
 import * as maptalks from 'maptalks';
@@ -92,7 +92,7 @@ class Index extends React.Component {
             })
           ]
         }, {
-          animation: true,
+          animation: false,
           renderer: 'webgl'
         });
 

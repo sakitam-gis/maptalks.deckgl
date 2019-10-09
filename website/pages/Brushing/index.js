@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { scaleLinear } from 'd3-scale';
-import { DeckGLLayer } from '../../../src';
+import DeckGLLayer from '../../../src';
 import ArcBrushingLayer from './arc-brushing-layer/arc-brushing-layer';
 import ScatterplotBrushingLayer from './scatterplot-brushing-layer/scatterplot-brushing-layer';
 import * as maptalks from 'maptalks';
@@ -31,9 +31,9 @@ class Index extends React.Component {
 
   componentDidMount () {
     this.map = new maptalks.Map(this.container, {
-      center: [-100, 40.7],
-      zoom: 3,
-      pitch: 40.5,
+      center: [-75, 40],
+      zoom: 16,
+      pitch: 45,
       bearing: 0,
       centerCross: true,
       baseLayer: new maptalks.TileLayer('tile', {
