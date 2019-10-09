@@ -1,8 +1,8 @@
 import * as React from 'react';
 import axios from 'axios';
 import Color from 'color';
-import DeckGLLayer from '../../src';
-import { TileLayer } from '@deck.gl/experimental-layers';
+import { DeckGLLayer } from '../../src';
+import { TileLayer } from '@deck.gl/geo-layers';
 // import { GeoJsonLayer } from '@deck.gl/layers';
 // import { VectorTile } from '@mapbox/vector-tile';
 // import Protobuf from 'pbf';
@@ -45,7 +45,7 @@ function getTileData ({ x, y, z }) {
   const url = `http://58.87.95.84:3333/osm?z=${z}&x=${x}&y=${y}`
   return axios.get(url, {
     headers: {
-      'Pragma': 'cache'
+      Pragma: 'cache'
     }
   })
     .then(({ data }) => {
@@ -82,8 +82,8 @@ class Index extends React.Component {
       maxPitch: 60,
       maxVisualPitch: 60,
       baseLayer: new maptalks.TileLayer('tile', {
-        'urlTemplate': 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
-        'subdomains': ['a', 'b', 'c', 'd']
+        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg'
+        // subdomains: ['a', 'b', 'c', 'd']
       })
     });
 
@@ -97,6 +97,7 @@ class Index extends React.Component {
       opacity: 0.8,
       // getPolygon: f => f.polygon,
       getElevation: f => {
+        // eslint-disable-next-line no-prototype-builtins
         if (f.properties.hasOwnProperty('height')) {
           return f.properties.height * 2
         } else {
@@ -104,6 +105,7 @@ class Index extends React.Component {
         }
       },
       getFillColor: f => {
+        // eslint-disable-next-line no-prototype-builtins
         if (f.properties.hasOwnProperty('roofColor')) {
           return Color(f.properties.roofColor).rgb().array()
         } else {
@@ -126,13 +128,13 @@ class Index extends React.Component {
       getTileData
     });
     this.deckLayer = new DeckGLLayer('deck', {
-      'layers': [
+      layers: [
         layer
       ]
     }, {
-      'minZoom': 15,
-      'animation': true,
-      'renderer': 'webgl'
+      minZoom: 15,
+      animation: true,
+      renderer: 'webgl'
     });
     this.map.addLayer(this.deckLayer);
   }
@@ -149,7 +151,7 @@ class Index extends React.Component {
   };
 
   render () {
-    return (<div ref={this.setRef} className="map-content"></div>);
+    return (<div ref={this.setRef} className="map-content"/>);
   }
 }
 

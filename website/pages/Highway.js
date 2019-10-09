@@ -1,5 +1,5 @@
 import * as React from 'react';
-import DeckGLLayer from '../../src';
+import { DeckGLLayer } from '../../src';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { scaleLinear, scaleThreshold } from 'd3-scale';
 import * as maptalks from 'maptalks';
@@ -51,8 +51,8 @@ class Index extends React.Component {
         projection: 'EPSG:3857'
       },
       baseLayer: new maptalks.TileLayer('tile', {
-        'urlTemplate': 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
-        'subdomains': ['a', 'b', 'c', 'd'],
+        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg',
+        // subdomains: ['a', 'b', 'c', 'd'],
         spatialReference: {
           projection: 'EPSG:3857'
         }
@@ -65,7 +65,7 @@ class Index extends React.Component {
       if (!error) {
         const { fatalities, incidents } = this._aggregateAccidents(accidents);
         this.deckLayer = new DeckGLLayer('deck', {
-          'layers': [
+          layers: [
             new GeoJsonLayer({
               id: 'geojson',
               data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/highway/roads.json',
@@ -91,8 +91,8 @@ class Index extends React.Component {
             })
           ]
         }, {
-          'animation': true,
-          'renderer': 'webgl'
+          animation: true,
+          renderer: 'webgl'
         });
 
         this.map.addLayer(this.deckLayer);
@@ -159,7 +159,7 @@ class Index extends React.Component {
   };
 
   render () {
-    return (<div ref={this.setRef} className="map-content"></div>);
+    return (<div ref={this.setRef} className="map-content"/>);
   }
 }
 

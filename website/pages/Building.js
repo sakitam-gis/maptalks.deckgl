@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { DeckGLLayer } from '../../src';
 import { PolygonLayer } from '@deck.gl/layers';
 import { TripsLayer } from '@deck.gl/geo-layers';
@@ -28,8 +28,9 @@ class Index extends React.Component {
       bearing: 0,
       centerCross: true,
       baseLayer: new maptalks.TileLayer('tile', {
-        urlTemplate: '//google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}'
-        // subdomains: ['a', 'b', 'c', 'd']
+        // urlTemplate: '//google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}'
+        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg'
+        // subdomains: ['a', 'b', 'c']
       })
     });
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import DeckGLLayer from '../../src';
-import { LineLayer, ScatterplotLayer } from '@deck.gl/layers';
+import { DeckGLLayer } from '../../src';
+import { LineLayer as DeckLineLayer, ScatterplotLayer } from '@deck.gl/layers';
 import * as maptalks from 'maptalks';
 
 const DATA_URL = {
@@ -26,7 +26,7 @@ function getSize (type) {
   return 60;
 }
 
-class Index extends React.Component {
+class LineLayer extends React.Component {
   constructor (props, context) {
     super(props, context);
     this.state = {};
@@ -50,13 +50,13 @@ class Index extends React.Component {
       bearing: 0,
       centerCross: true,
       baseLayer: new maptalks.TileLayer('tile', {
-        'urlTemplate': 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
-        'subdomains': ['a', 'b', 'c', 'd']
+        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg'
+        // subdomains: ['a', 'b', 'c', 'd']
       })
     });
 
     this.deckLayer = new DeckGLLayer('deck', {
-      'layers': [
+      layers: [
         new ScatterplotLayer({
           id: 'airports',
           data: airports,
@@ -66,7 +66,7 @@ class Index extends React.Component {
           getRadius: d => getSize(d.type),
           pickable: true
         }),
-        new LineLayer({
+        new DeckLineLayer({
           id: 'flight-paths',
           data: flightPaths,
           fp64: false,
@@ -78,8 +78,8 @@ class Index extends React.Component {
         })
       ]
     }, {
-      'animation': true,
-      'renderer': 'webgl'
+      animation: true,
+      renderer: 'webgl'
     });
 
     this.map.addLayer(this.deckLayer);
@@ -97,8 +97,8 @@ class Index extends React.Component {
   };
 
   render () {
-    return (<div ref={this.setRef} className="map-content"></div>);
+    return (<div ref={this.setRef} className="map-content"/>);
   }
 }
 
-export default Index;
+export default LineLayer;

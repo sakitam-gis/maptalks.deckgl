@@ -1,9 +1,9 @@
 import * as React from 'react';
-import DeckGLLayer from '../../src';
+import { DeckGLLayer } from '../../src';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import * as maptalks from 'maptalks';
 
-class Index extends React.Component {
+class Polygon extends React.Component {
   constructor (props, context) {
     super(props, context);
     this.state = {
@@ -27,13 +27,13 @@ class Index extends React.Component {
       bearing: 0,
       centerCross: true,
       baseLayer: new maptalks.TileLayer('tile', {
-        'urlTemplate': 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
-        'subdomains': ['a', 'b', 'c', 'd']
+        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg'
+        // subdomains: ['a', 'b', 'c', 'd']
       })
     });
 
     this.deckLayer = new DeckGLLayer('deck', {
-      'layers': [
+      layers: [
         new GeoJsonLayer({
           data: 'http://58.87.95.84:7300/mock/5b974eaa51241d6b41b178aa/learn-gis/building',
           stroked: true,
@@ -45,8 +45,8 @@ class Index extends React.Component {
         })
       ]
     }, {
-      'animation': true,
-      'renderer': 'webgl'
+      animation: true,
+      renderer: 'webgl'
     });
 
     this.map.addLayer(this.deckLayer);
@@ -64,8 +64,8 @@ class Index extends React.Component {
   };
 
   render () {
-    return (<div ref={this.setRef} className="map-content"></div>);
+    return (<div ref={this.setRef} className="map-content"/>);
   }
 }
 
-export default Index;
+export default Polygon;

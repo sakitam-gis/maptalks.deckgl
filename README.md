@@ -26,8 +26,8 @@ const map = new maptalks.Map(this.container, {
   bearing: 0,
   centerCross: true,
   baseLayer: new maptalks.TileLayer('tile', {
-    'urlTemplate': 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
-    'subdomains': ['a', 'b', 'c', 'd']
+    'urlTemplate': 'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg'
+    // 'subdomains': ['a', 'b', 'c', 'd']
   })
 });
 

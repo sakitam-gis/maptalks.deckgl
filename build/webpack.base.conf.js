@@ -41,6 +41,7 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loader: 'babel-loader',
         include: [
+          utils.resolve('src'),
           utils.resolve('website'),
           utils.resolve('node_modules/webpack-dev-server/client')
         ],

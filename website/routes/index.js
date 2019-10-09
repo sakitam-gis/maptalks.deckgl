@@ -3,13 +3,6 @@ import { Route, Switch, Redirect } from 'react-router-dom'; // eslint-disable-li
 import 'maptalks/dist/maptalks.css';
 import '../assets/style/art.scss';
 import loadable from '@loadable/component';
-// import Brushing from '../pages/Brushing';
-// import Building from '../pages/Building';
-// import Highway from '../pages/Highway';
-// import HexagonLayer from '../pages/HexagonLayer';
-// import Vector from '../pages/Vector';
-// import Polygon from '../pages/Polygon';
-// import LineLayer from '../pages/LineLayer';
 
 const mainRouter = [
   {
@@ -27,55 +20,55 @@ const mainRouter = [
       path: '/building',
       component: loadable(() => import(/* webpackChunkName: 'Building' */ '../pages/Building'))
     }
+  },
+  {
+    name: 'highway',
+    key: 'highway',
+    route: {
+      path: '/highway',
+      component: loadable(() => import(/* webpackChunkName: 'Highway' */ '../pages/Highway'))
+    }
+  },
+  {
+    name: 'hexagon',
+    key: 'hexagon',
+    route: {
+      path: '/hexagon',
+      component: loadable(() => import(/* webpackChunkName: 'HexagonLayer' */ '../pages/HexagonLayer'))
+    }
+  },
+  {
+    name: 'brushing',
+    key: 'brushing',
+    route: {
+      path: '/brushing',
+      component: loadable(() => import(/* webpackChunkName: 'Brushing' */ '../pages/Brushing'))
+    }
+  },
+  {
+    name: 'vector',
+    key: 'vector',
+    route: {
+      path: '/vector',
+      component: loadable(() => import(/* webpackChunkName: 'Brushing' */ '../pages/Vector'))
+    }
+  },
+  {
+    name: 'polygon',
+    key: 'polygon',
+    route: {
+      path: '/polygon',
+      component: loadable(() => import(/* webpackChunkName: 'Brushing' */ '../pages/Polygon'))
+    }
+  },
+  {
+    name: 'linelayer',
+    key: 'linelayer',
+    route: {
+      path: '/linelayer',
+      component: loadable(() => import(/* webpackChunkName: 'Brushing' */ '../pages/LineLayer'))
+    }
   }
-  // {
-  //   name: 'highway',
-  //   key: 'highway',
-  //   route: {
-  //     path: '/highway',
-  //     component: Highway
-  //   }
-  // },
-  // {
-  //   name: 'hexagon',
-  //   key: 'hexagon',
-  //   route: {
-  //     path: '/hexagon',
-  //     component: HexagonLayer
-  //   }
-  // },
-  // {
-  //   name: 'brushing',
-  //   key: 'brushing',
-  //   route: {
-  //     path: '/brushing',
-  //     component: Brushing
-  //   }
-  // },
-  // {
-  //   name: 'vector',
-  //   key: 'vector',
-  //   route: {
-  //     path: '/vector',
-  //     component: Vector
-  //   }
-  // },
-  // {
-  //   name: 'polygon',
-  //   key: 'polygon',
-  //   route: {
-  //     path: '/polygon',
-  //     component: Polygon
-  //   }
-  // },
-  // {
-  //   name: 'linelayer',
-  //   key: 'linelayer',
-  //   route: {
-  //     path: '/linelayer',
-  //     component: LineLayer
-  //   }
-  // }
 ];
 
 const routes = (

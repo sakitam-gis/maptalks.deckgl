@@ -59,8 +59,7 @@ class Index extends React.Component {
       bearing: -27.396674584323023,
       centerCross: true,
       baseLayer: new maptalks.TileLayer('tile', {
-        'urlTemplate': 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
-        'subdomains': ['a', 'b', 'c', 'd']
+        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg'
       })
     });
 
@@ -105,7 +104,7 @@ class Index extends React.Component {
     if (data) {
       const props = {
         layers: [
-          new HexagonLayer({
+          new H3HexagonLayer({
             id: 'heatmap',
             colorRange,
             coverage,
@@ -126,8 +125,8 @@ class Index extends React.Component {
       if (!this.inited) {
         this.inited = true;
         this.deckLayer = new DeckGLLayer('deck', props, {
-          'animation': true,
-          'renderer': 'webgl'
+          animation: true,
+          renderer: 'webgl'
         });
         this.map.addLayer(this.deckLayer);
       } else if (this.deckLayer) {
@@ -149,7 +148,7 @@ class Index extends React.Component {
 
   render () {
     this._renderLayers();
-    return (<div ref={this.setRef} className="map-content"></div>);
+    return (<div ref={this.setRef} className="map-content"/>);
   }
 }
 
