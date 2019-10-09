@@ -6,23 +6,24 @@ import {
   renderer
 } from 'maptalks';
 
-import { createContext } from './utils';
+import { createContext, getDevicePixelRatio } from './utils';
 
 const _options = {
   renderer: 'webgl',
   doubleBuffer: true,
   glOptions: {
     alpha: true,
+    depth: true,
     antialias: true,
-    preserveDrawingBuffer: true
+    stencil: true
   },
   forceRenderOnMoving: true,
   forceRenderOnZooming: true
 };
 
 const originProps = {
-  useDevicePixels: false,
-  autoResizeDrawingBuffer: true
+  useDevicePixels: true,
+  autoResizeDrawingBuffer: false
 };
 
 // from https://github.com/maptalks/maptalks.mapboxgl/blob/5db0b124981f59e597ae66fb68c9763c53578ac2/index.js#L201
@@ -87,9 +88,6 @@ class DeckGLLayer extends CanvasLayer {
      * @private
      */
     this._isLoad = false;
-
-    // this.on('renderstart', this.handleRenderStart, this);
-    // this.on('renderend', this.handleRenderEnd, this);
   }
 
   /**
@@ -205,22 +203,11 @@ class DeckGLLayer extends CanvasLayer {
     }
   }
 
-  handleRenderEnd (event) {
-    console.log(event);
-  }
-
-  handleRenderStart (event) {
-    console.log(event);
-  }
-
   remove () {
     if (this.deck) {
       this.deck.finalize();
       delete this.deck;
     }
-
-    this.off('renderstart', this.handleRenderStart, this);
-    this.off('renderend', this.handleRenderEnd, this);
 
     super.remove();
   }
@@ -244,29 +231,17 @@ class Renderer extends renderer.CanvasLayerRenderer {
     }
     return super.needToRedraw();
   }
-  //
-  // /**
-  //  * listen canvas create
-  //  */
-  // onCanvasCreate () {
-  //   const map = this.getMap();
-  //   if (this.canvas && this.layer.options.doubleBuffer) {
-  //     this.buffer = canvas2d.createCanvas(this.canvas.width, this.canvas.height, map.CanvasClass);
-  //     this.context = this.buffer.getContext('2d');
-  //   }
-  // }
 
   /**
    * create canvas
    */
   createCanvas () {
-    if (this.canvas) return;
-    if (!this.canvas) {
+    if (!this.canvas && !this.gl) {
       const map = this.getMap();
       const size = map.getSize();
       // const width = size.width;
       // const height = size.height;
-      const retina = map.getDevicePixelRatio() || 1;
+      const retina = (map.getDevicePixelRatio ? map.getDevicePixelRatio() : getDevicePixelRatio()) || 1;
       const [width, height] = [retina * size.width, retina * size.height];
       this.canvas = canvas2d.createCanvas(width, height, map.CanvasClass);
       if (this.canvas.style) {
@@ -287,12 +262,13 @@ class Renderer extends renderer.CanvasLayerRenderer {
     // eslint-disable-next-line no-useless-return
     if (!this.canvas) return;
     const map = this.getMap();
-    const retina = map.getDevicePixelRatio() || 1;
+    const retina = (map.getDevicePixelRatio ? map.getDevicePixelRatio() : getDevicePixelRatio()) || 1;
     const size = canvasSize || map.getSize();
-    this.canvas.height = retina * size.height;
-    this.canvas.width = retina * size.width;
-    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-    this.requestMapToRender();
+    if (this.canvas.width !== size.width * retina || this.canvas.height !== size.height * retina) {
+      this.canvas.height = retina * size.height;
+      this.canvas.width = retina * size.width;
+      this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+    }
   }
 
   /**

@@ -4,6 +4,7 @@ import { DeckGLLayer } from '../../../src';
 import ArcBrushingLayer from './arc-brushing-layer/arc-brushing-layer';
 import ScatterplotBrushingLayer from './scatterplot-brushing-layer/scatterplot-brushing-layer';
 import * as maptalks from 'maptalks';
+import { getDevicePixelRatio } from '../../../src/utils';
 
 const DATA_URL =
   'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/arc/counties.json';
@@ -36,7 +37,7 @@ class Index extends React.Component {
       bearing: 0,
       centerCross: true,
       baseLayer: new maptalks.TileLayer('tile', {
-        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg'
+        urlTemplate: `https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}${getDevicePixelRatio() > 1.5 ? '@2x' : ''}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg`
       })
     });
 

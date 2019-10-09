@@ -2,12 +2,13 @@ import * as React from 'react';
 import { DeckGLLayer } from '../../src';
 import { LineLayer as DeckLineLayer, ScatterplotLayer } from '@deck.gl/layers';
 import * as maptalks from 'maptalks';
+import { getDevicePixelRatio } from '../../src/utils';
 
 const DATA_URL = {
   AIRPORTS:
-    'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/line/airports.json',
+    'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/line/airports.json', // eslint-disable-line
   FLIGHT_PATHS:
-    'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/line/heathrow-flights.json'
+    'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/line/heathrow-flights.json' // eslint-disable-line
 };
 
 function getColor (d) {
@@ -50,7 +51,7 @@ class LineLayer extends React.Component {
       bearing: 0,
       centerCross: true,
       baseLayer: new maptalks.TileLayer('tile', {
-        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg'
+        urlTemplate: `https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}${getDevicePixelRatio() > 1.5 ? '@2x' : ''}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg`
         // subdomains: ['a', 'b', 'c', 'd']
       })
     });
@@ -73,7 +74,7 @@ class LineLayer extends React.Component {
           getSourcePosition: d => d.start,
           getTargetPosition: d => d.end,
           getColor,
-          getStrokeWidth,
+          getWidth: getStrokeWidth,
           pickable: true
         })
       ]

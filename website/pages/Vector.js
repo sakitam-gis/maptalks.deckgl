@@ -7,6 +7,7 @@ import { TileLayer } from '@deck.gl/geo-layers';
 // import { VectorTile } from '@mapbox/vector-tile';
 // import Protobuf from 'pbf';
 import * as maptalks from 'maptalks';
+import { getDevicePixelRatio } from '../../src/utils';
 
 // const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA';
 
@@ -82,7 +83,7 @@ class Index extends React.Component {
       maxPitch: 60,
       maxVisualPitch: 60,
       baseLayer: new maptalks.TileLayer('tile', {
-        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg'
+        urlTemplate: `https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}${getDevicePixelRatio() > 1.5 ? '@2x' : ''}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg`
         // subdomains: ['a', 'b', 'c', 'd']
       })
     });

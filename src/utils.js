@@ -22,6 +22,13 @@ const createContext = function (canvas, glOptions = {}) {
   return gl;
 };
 
+const devicePixelRatio = window.devicePixelRatio || window.screen.deviceXDPI / window.screen.logicalXDPI;
+
+function getDevicePixelRatio () {
+  return Math.ceil(devicePixelRatio) || 1;
+}
+
 export {
-  createContext
+  createContext,
+  getDevicePixelRatio
 };

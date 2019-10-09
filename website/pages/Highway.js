@@ -3,6 +3,7 @@ import { DeckGLLayer } from '../../src';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { scaleLinear, scaleThreshold } from 'd3-scale';
 import * as maptalks from 'maptalks';
+import { getDevicePixelRatio } from '../../src/utils';
 
 const COLOR_SCALE = scaleThreshold()
   .domain([0, 4, 8, 12, 20, 32, 52, 84, 136, 220])
@@ -51,7 +52,7 @@ class Index extends React.Component {
         projection: 'EPSG:3857'
       },
       baseLayer: new maptalks.TileLayer('tile', {
-        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg',
+        urlTemplate: `https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}${getDevicePixelRatio() > 1.5 ? '@2x' : ''}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg`,
         // subdomains: ['a', 'b', 'c', 'd'],
         spatialReference: {
           projection: 'EPSG:3857'

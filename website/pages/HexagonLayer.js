@@ -1,10 +1,40 @@
 import * as React from 'react';
-import { DeckGLLayer } from '../../src';
-import { H3HexagonLayer } from '@deck.gl/geo-layers';
 import * as maptalks from 'maptalks';
+import { PhongMaterial } from '@luma.gl/core';
+import { AmbientLight, PointLight, LightingEffect } from '@deck.gl/core';
+import { HexagonLayer } from '@deck.gl/aggregation-layers';
+import { DeckGLLayer } from '../../src';
+import { getDevicePixelRatio } from '../../src/utils';
 
 const DATA_URL =
   'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/3d-heatmap/heatmap-data.csv';
+
+const ambientLight = new AmbientLight({
+  color: [255, 255, 255],
+  intensity: 1.0
+});
+
+const pointLight1 = new PointLight({
+  color: [255, 255, 255],
+  intensity: 0.8,
+  position: [-0.144528, 49.739968, 80000]
+});
+
+const pointLight2 = new PointLight({
+  color: [255, 255, 255],
+  intensity: 0.8,
+  position: [-3.807751, 54.104682, 8000]
+});
+
+// eslint-disable-next-line no-unused-vars
+const lightingEffect = new LightingEffect({ ambientLight, pointLight1, pointLight2 });
+
+const material = new PhongMaterial({
+  ambient: 0.64,
+  diffuse: 0.6,
+  shininess: 32,
+  specularColor: [51, 51, 51]
+});
 
 const LIGHT_SETTINGS = {
   lightsPosition: [-0.144528, 49.739968, 8000, -3.807751, 54.104682, 8000],
@@ -59,7 +89,7 @@ class Index extends React.Component {
       bearing: -27.396674584323023,
       centerCross: true,
       baseLayer: new maptalks.TileLayer('tile', {
-        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg'
+        urlTemplate: `https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}${getDevicePixelRatio() > 1.5 ? '@2x' : ''}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg`
       })
     });
 
@@ -104,7 +134,7 @@ class Index extends React.Component {
     if (data) {
       const props = {
         layers: [
-          new H3HexagonLayer({
+          new HexagonLayer({
             id: 'heatmap',
             colorRange,
             coverage,
@@ -118,9 +148,15 @@ class Index extends React.Component {
             opacity: 1,
             pickable: Boolean(this.props.onHover),
             radius,
-            upperPercentile
+            upperPercentile,
+            material,
+
+            transitions: {
+              elevationScale: 3000
+            }
           })
         ]
+        // effects: lightingEffect
       };
       if (!this.inited) {
         this.inited = true;
