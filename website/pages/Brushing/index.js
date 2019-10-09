@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { scaleLinear } from 'd3-scale';
-import DeckGLLayer from '../../../src';
-import ArcBrushingLayer from './arc-brushing-layer/arc-brushing-layer';
-import ScatterplotBrushingLayer from './scatterplot-brushing-layer/scatterplot-brushing-layer';
 import * as maptalks from 'maptalks';
+import { scaleLinear } from 'd3-scale';
+
+import { ScatterplotLayer, ArcLayer } from '@deck.gl/layers';
+import { BrushingExtension } from '@deck.gl/extensions';
+
+import DeckGLLayer from '../../../src';
 import { getDevicePixelRatio } from '../../../src/utils';
 
 const DATA_URL =
@@ -12,28 +14,32 @@ const DATA_URL =
 const SOURCE_COLOR = [166, 3, 3];
 const TARGET_COLOR = [35, 181, 184];
 
+export const inFlowColors = [[35, 181, 184]];
+export const outFlowColors = [[166, 3, 3]];
+
+const brushingExtension = new BrushingExtension();
+
 class Index extends React.Component {
   constructor (props, context) {
     super(props, context);
     this.state = {
-      zoom: 14,
-      fov: 0,
-      pitch: 0,
-      bearing: 0
+      arcs: [],
+      targets: [],
+      sources: []
     };
 
     this.container = null;
     this.map = null;
     this.deckLayer = null;
     this.inited = false;
-    this.mousePosition = null;
+    this._onHover = this._onHover.bind(this);
   }
 
   componentDidMount () {
     this.map = new maptalks.Map(this.container, {
-      center: [-75, 40],
-      zoom: 16,
-      pitch: 45,
+      center: [-100, 40.7],
+      zoom: 3,
+      pitch: 0,
       bearing: 0,
       centerCross: true,
       baseLayer: new maptalks.TileLayer('tile', {
@@ -41,9 +47,14 @@ class Index extends React.Component {
       })
     });
 
-    fetch(DATA_URL).then(response => response.json()).then(({ features }) => {
-      this._animate(features);
-    });
+    fetch(DATA_URL)
+      .then(response => response.json())
+      .then(({ features }) => {
+        this._animate();
+        this.setState({
+          ...this._getLayerData(features)
+        })
+      });
   }
 
   componentWillUnmount () {
@@ -53,67 +64,74 @@ class Index extends React.Component {
     }
   }
 
-  _animate = (features) => {
+  _onHover ({ x, y, object }) {
+    this.setState({ x, y, hoveredObject: object });
+  }
+
+  _animate = () => {
     const [
       enableBrushing,
       brushRadius,
       strokeWidth,
       opacity
     ] = [true, 100000, 2, 0.7];
-    const { mousePosition } = this;
-    const { arcs, targets, sources } = this._getLayerData(features);
-    const startBrushing = !enableBrushing;
+    const { arcs, targets, sources } = this.state;
+
+    if (!arcs || !targets) {
+      return null;
+    }
+
     const layers = [
-      new ScatterplotBrushingLayer({
+      new ScatterplotLayer({
         id: 'sources',
         data: sources,
-        brushRadius,
-        brushTarget: true,
-        mousePosition,
+        brushingRadius: brushRadius,
         opacity: 1,
-        enableBrushing: startBrushing,
+        brushingEnabled: enableBrushing,
         pickable: false,
         // only show source points when brushing
-        radiusScale: startBrushing ? 3000 : 0,
-        getColor: d => (d.gain > 0 ? TARGET_COLOR : SOURCE_COLOR),
-        getTargetPosition: d => [d.position[0], d.position[1], 0]
+        radiusScale: enableBrushing ? 3000 : 0,
+        getFillColor: d => (d.gain > 0 ? TARGET_COLOR : SOURCE_COLOR),
+        extensions: [brushingExtension]
       }),
-      new ScatterplotBrushingLayer({
+      new ScatterplotLayer({
         id: 'targets-ring',
         data: targets,
-        brushRadius,
-        mousePosition,
-        strokeWidth: 2,
-        outline: true,
+        brushingRadius: brushRadius,
+        lineWidthMinPixels: 2,
+        stroked: true,
+        filled: false,
         opacity: 1,
-        enableBrushing: startBrushing,
+        brushingEnabled: enableBrushing,
         // only show rings when brushing
-        radiusScale: startBrushing ? 4000 : 0,
-        getColor: d => (d.net > 0 ? TARGET_COLOR : SOURCE_COLOR)
+        radiusScale: enableBrushing ? 4000 : 0,
+        getLineColor: d => (d.net > 0 ? TARGET_COLOR : SOURCE_COLOR),
+        extensions: [brushingExtension]
       }),
-      new ScatterplotBrushingLayer({
+      new ScatterplotLayer({
         id: 'targets',
         data: targets,
-        brushRadius,
-        mousePosition,
+        brushingRadius: brushRadius,
         opacity: 1,
-        enableBrushing: startBrushing,
+        brushingEnabled: enableBrushing,
         pickable: true,
         radiusScale: 3000,
-        getColor: d => (d.net > 0 ? TARGET_COLOR : SOURCE_COLOR)
+        onHover: this._onHover,
+        getFillColor: d => (d.net > 0 ? TARGET_COLOR : SOURCE_COLOR),
+        extensions: [brushingExtension]
       }),
-      new ArcBrushingLayer({
+      new ArcLayer({
         id: 'arc',
         data: arcs,
-        strokeWidth,
+        getWidth: strokeWidth,
         opacity,
-        brushRadius,
-        enableBrushing: startBrushing,
-        mousePosition,
+        brushingRadius: brushRadius,
+        brushingEnabled: enableBrushing,
         getSourcePosition: d => d.source,
         getTargetPosition: d => d.target,
-        getSourceColor: d => SOURCE_COLOR,
-        getTargetColor: d => TARGET_COLOR
+        getSourceColor: SOURCE_COLOR,
+        getTargetColor: TARGET_COLOR,
+        extensions: [brushingExtension]
       })
     ];
     const props = {
@@ -199,7 +217,11 @@ class Index extends React.Component {
   };
 
   render () {
-    return (<div ref={this.setRef} className="map-content"></div>);
+    if (this.deckLayer) {
+      this._animate();
+    }
+
+    return (<div ref={this.setRef} className="map-content"/>);
   }
 }
 

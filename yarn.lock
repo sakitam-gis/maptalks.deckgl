@@ -847,6 +847,11 @@
     seer "^0.2.4"
     viewport-mercator-project "^6.1.0"
 
+"@deck.gl/extensions@^7.3.2":
+  version "7.3.2"
+  resolved "https://registry.npm.taobao.org/@deck.gl/extensions/download/@deck.gl/extensions-7.3.2.tgz#8e72622496b9a5fd04a1ecac65e61ee9ccd2becc"
+  integrity sha1-jnJiJJa5pf0EoeysZeYe6czSvsw=
+
 "@deck.gl/geo-layers@^7.3.2":
   version "7.3.2"
   resolved "https://registry.npm.taobao.org/@deck.gl/geo-layers/download/@deck.gl/geo-layers-7.3.2.tgz#dc41e536b536a1b3896a6833d7acb6d7baa6a147"

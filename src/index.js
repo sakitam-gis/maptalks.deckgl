@@ -9,6 +9,7 @@ import {
 import { createContext, getDevicePixelRatio } from './utils';
 
 const _options = {
+  registerEvents: true, // register map events default
   renderer: 'webgl',
   doubleBuffer: true,
   glOptions: {
@@ -122,6 +123,40 @@ class DeckGLLayer extends CanvasLayer {
     // const map = this.getMap();
   }
 
+  onMouseClick (event) {
+    let ev = {};
+    if (!event.offsetCenter) {
+      ev = {
+        type: 'click',
+        offsetCenter: event.containerPoint,
+        srcEvent: event.domEvent
+      };
+    }
+    this.deck._onEvent(ev);
+  }
+
+  onMouseMove (event) {
+    let ev = {};
+    if (!event.offsetCenter) {
+      ev = {
+        offsetCenter: event.containerPoint,
+        srcEvent: event.domEvent
+      };
+    }
+    this.deck._onPointerMove(ev);
+  }
+
+  onMouseDown (event) {
+    let ev = {};
+    if (!event.offsetCenter) {
+      ev = {
+        offsetCenter: event.containerPoint,
+        srcEvent: event.domEvent
+      };
+    }
+    this.deck._onPointerDown(ev);
+  }
+
   onRemove () {}
 
   renderLayer () {
@@ -170,7 +205,13 @@ class DeckGLLayer extends CanvasLayer {
     });
 
     if (!this.deck && !this._isLoad) {
-      this.deck = new Deck(deckProps)
+      this.deck = new Deck(deckProps);
+
+      if (this.options.registerEvents) {
+        map.on('mousemove', this.onMouseMove, this);
+        map.on('mousedown', this.onMouseDown, this);
+        map.on('click', this.onMouseClick, this);
+      }
     }
 
     if (this._isLoad) {
@@ -203,7 +244,13 @@ class DeckGLLayer extends CanvasLayer {
   }
 
   remove () {
-    if (this.deck) {
+    const map = this.getMap();
+    if (this.deck && map) {
+      if (this.options.registerEvents) {
+        map.off('mousemove', this.onMouseMove, this);
+        map.off('mousedown', this.onMouseDown, this);
+        map.off('click', this.onMouseClick, this);
+      }
       this.deck.finalize();
       delete this.deck;
     }
