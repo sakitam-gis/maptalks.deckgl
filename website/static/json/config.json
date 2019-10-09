@@ -61,5 +61,12 @@
     "chart_name": "icon-layer",
     "chart_author": "sakitam-fdd",
     "chart_time": "2019.10.07"
+  },
+  {
+    "imgSrc": "./static/images/linelayer.jpg",
+    "link": "/vancouver-polygon",
+    "chart_name": "vancouver-polygon",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2019.10.07"
   }
 ]

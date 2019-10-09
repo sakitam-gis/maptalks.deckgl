@@ -84,6 +84,14 @@ const mainRouter = [
       path: '/icon-layer',
       component: loadable(() => import(/* webpackChunkName: 'IconLayer' */ '../pages/IconLayer'))
     }
+  },
+  {
+    name: 'vancouver-polygon',
+    key: 'vancouver-polygon',
+    route: {
+      path: '/vancouver-polygon',
+      component: loadable(() => import(/* webpackChunkName: 'VancouverPolygon' */ '../pages/VancouverPolygon'))
+    }
   }
 ];
 

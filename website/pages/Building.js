@@ -3,7 +3,39 @@ import DeckGLLayer from '../../src';
 import { PolygonLayer } from '@deck.gl/layers';
 import { TripsLayer } from '@deck.gl/geo-layers';
 import * as maptalks from 'maptalks';
+import { PhongMaterial } from '@luma.gl/core';
+import { AmbientLight, PointLight, LightingEffect } from '@deck.gl/core';
 import { getDevicePixelRatio } from '../../src/utils';
+
+const ambientLight = new AmbientLight({
+  color: [255, 255, 255],
+  intensity: 1.0
+});
+
+const pointLight = new PointLight({
+  color: [255, 255, 255],
+  intensity: 2.0,
+  position: [-74.05, 40.7, 8000]
+});
+
+const lightingEffect = new LightingEffect({ ambientLight, pointLight });
+
+const material = new PhongMaterial({
+  ambient: 0.1,
+  diffuse: 0.6,
+  shininess: 32,
+  specularColor: [60, 64, 70]
+});
+
+const DEFAULT_THEME = {
+  buildingColor: [74, 80, 87],
+  trailColor0: [253, 128, 93],
+  trailColor1: [23, 184, 190],
+  material,
+  effects: [lightingEffect]
+};
+
+const landCover = [[[-74.0, 40.7], [-74.02, 40.7], [-74.02, 40.72], [-74.0, 40.72]]];
 
 class Index extends React.Component {
   constructor (props, context) {
@@ -49,34 +81,45 @@ class Index extends React.Component {
     const loopTime = loopLength / animationSpeed;
     const time = ((timestamp % loopTime) / loopTime) * loopLength;
     const layers = [
+      new PolygonLayer({
+        id: 'ground',
+        data: landCover,
+        getPolygon: f => f,
+        stroked: false,
+        getFillColor: [0, 0, 0, 0]
+      }),
       new TripsLayer({
         id: 'trips',
-        data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/trips.json',
-        getPath: d => d.segments,
-        getColor: d => (d.vendor === 0 ? [253, 128, 93] : [23, 184, 190]),
+        data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/trips-v7.json',
+        currentTime: time,
+        getPath: d => d.path,
+        getTimestamps: d => d.timestamps,
+        getColor: d => (d.vendor === 0 ? DEFAULT_THEME.trailColor0 : DEFAULT_THEME.trailColor1),
         opacity: 0.3,
-        strokeWidth: 2,
+        widthMinPixels: 2,
+        rounded: true,
         trailLength: 180,
-        currentTime: time
+
+        shadowEnabled: false
       }),
       new PolygonLayer({
         id: 'buildings',
         data: 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/buildings.json',
         extruded: true,
         wireframe: false,
-        fp64: true,
         opacity: 0.5,
         getPolygon: f => f.polygon,
         getElevation: f => f.height,
-        getFillColor: [74, 80, 87],
-        lightSettings: {
-          lightsPosition: [-74.05, 40.7, 8000, -73.5, 41, 5000],
-          ambientRatio: 0.05,
-          diffuseRatio: 0.6,
-          specularRatio: 0.8,
-          lightsStrength: [2.0, 0.0, 0.0, 0.0],
-          numberOfLights: 2
-        }
+        getFillColor: DEFAULT_THEME.buildingColor,
+        material: DEFAULT_THEME.material
+        // lightSettings: {
+        //   lightsPosition: [-74.05, 40.7, 8000, -73.5, 41, 5000],
+        //   ambientRatio: 0.05,
+        //   diffuseRatio: 0.6,
+        //   specularRatio: 0.8,
+        //   lightsStrength: [2.0, 0.0, 0.0, 0.0],
+        //   numberOfLights: 2
+        // }
       })
     ];
     const props = {
