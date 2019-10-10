@@ -4,6 +4,8 @@
   margin: 50px auto;
   padding: 0 15px;
   text-align: left;
+  height: calc(100% - 50px);
+  overflow-y: auto;
 }
 
 .charts-list {

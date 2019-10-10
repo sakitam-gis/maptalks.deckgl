@@ -92,6 +92,14 @@ const mainRouter = [
       path: '/vancouver-polygon',
       component: loadable(() => import(/* webpackChunkName: 'VancouverPolygon' */ '../pages/VancouverPolygon'))
     }
+  },
+  {
+    name: 'vancouver-test',
+    key: 'vancouver-test',
+    route: {
+      path: '/vancouver-test',
+      component: loadable(() => import(/* webpackChunkName: 'VancouverPolygon' */ '../pages/Test/Test'))
+    }
   }
 ];
 

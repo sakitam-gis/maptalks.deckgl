@@ -49,24 +49,31 @@
     "chart_time": "2018.12.23"
   },
   {
-    "imgSrc": "./static/images/linelayer.jpg",
+    "imgSrc": "./static/images/demo-thumb-3d-tiles.jpg",
     "link": "/3dtiles",
     "chart_name": "3dtiles",
     "chart_author": "sakitam-fdd",
     "chart_time": "2019.10.07"
   },
   {
-    "imgSrc": "./static/images/linelayer.jpg",
+    "imgSrc": "./static/images/demo-thumb-icon.jpg",
     "link": "/icon-layer",
     "chart_name": "icon-layer",
     "chart_author": "sakitam-fdd",
     "chart_time": "2019.10.07"
   },
   {
-    "imgSrc": "./static/images/linelayer.jpg",
+    "imgSrc": "./static/images/demo-thumb-geojson.jpg",
     "link": "/vancouver-polygon",
     "chart_name": "vancouver-polygon",
     "chart_author": "sakitam-fdd",
     "chart_time": "2019.10.07"
+  },
+  {
+    "imgSrc": "./static/images/demo-thumb-geojson.jpg",
+    "link": "/vancouver-test",
+    "chart_name": "vancouver-test",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2019.10.10"
   }
 ]

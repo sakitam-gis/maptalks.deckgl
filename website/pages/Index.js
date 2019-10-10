@@ -86,7 +86,9 @@ class Index extends Component {
    */
   render () {
     return (
-      <div>
+      <div style={{
+        height: '100%'
+      }}>
         <Header />
         <div className="main">
           <div className="charts-list">

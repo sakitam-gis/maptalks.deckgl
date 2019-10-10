@@ -1,10 +1,10 @@
 import React from 'react';
-import DeckGLLayer from '../../src';
-import { PolygonLayer, GeoJsonLayer } from '@deck.gl/layers';
 import * as maptalks from 'maptalks';
 import { scaleThreshold } from 'd3-scale';
+import { PolygonLayer, GeoJsonLayer } from '@deck.gl/layers';
 import { LightingEffect, AmbientLight, _SunLight as SunLight } from '@deck.gl/core';
 import { getDevicePixelRatio } from '../../src/utils';
+import DeckGLLayer from '../../src';
 
 const DATA_URL =
   'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/geojson/vancouver-blocks.json'; // eslint-disable-line
@@ -82,7 +82,8 @@ class VancouverPolygon extends React.Component {
       centerCross: true,
       baseLayer: new maptalks.TileLayer('tile', {
         urlTemplate: `https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}${getDevicePixelRatio() > 1.5 ? '@2x' : ''}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg`
-      })
+      }),
+      devicePixelRatio: 1
     });
 
     this._renderLayers();
@@ -147,12 +148,13 @@ class VancouverPolygon extends React.Component {
       })
     ];
     const props = {
-      layers: layers
+      layers: layers,
+      effects: this._effects
     };
     if (!this.inited) {
       this.inited = true;
       this.deckLayer = new DeckGLLayer('deck', props, {
-        animation: true,
+        animation: false,
         renderer: 'webgl'
       });
       this.map.addLayer(this.deckLayer);

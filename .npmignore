@@ -1,6 +1,12 @@
+.idea/
+.vscode/
 coverage/
 src/
+website/
 test/
+cache/
+_site/
+server/
 karma.config.js
 .editorconfig
 .eslintrc

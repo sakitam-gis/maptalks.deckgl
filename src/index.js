@@ -121,6 +121,23 @@ class DeckGLLayer extends CanvasLayer {
 
   onAdd () {
     // const map = this.getMap();
+    //
+    // const retina = (map.getDevicePixelRatio ? map.getDevicePixelRatio() : getDevicePixelRatio()) || 1;
+    // Deck.prototype._checkForCanvasSizeChange = function () {
+    //   const { canvas } = this;
+    //   if (!canvas) {
+    //     return false;
+    //   }
+    //   // Fallback to width/height when clientWidth/clientHeight are 0 or undefined.
+    //   const newWidth = (canvas.clientWidth || canvas.width) / retina;
+    //   const newHeight = (canvas.clientHeight || canvas.height) / retina;
+    //   if (newWidth !== this.width || newHeight !== this.height) {
+    //     this.width = newWidth;
+    //     this.height = newHeight;
+    //     return true;
+    //   }
+    //   return false;
+    // };
   }
 
   onMouseClick (event) {
@@ -245,6 +262,23 @@ class DeckGLLayer extends CanvasLayer {
 
   remove () {
     const map = this.getMap();
+
+    // Deck.prototype._checkForCanvasSizeChange = function () {
+    //   const { canvas } = this;
+    //   if (!canvas) {
+    //     return false;
+    //   }
+    //   // Fallback to width/height when clientWidth/clientHeight are 0 or undefined.
+    //   const newWidth = canvas.clientWidth || canvas.width;
+    //   const newHeight = canvas.clientHeight || canvas.height;
+    //   if (newWidth !== this.width || newHeight !== this.height) {
+    //     this.width = newWidth;
+    //     this.height = newHeight;
+    //     return true;
+    //   }
+    //   return false;
+    // };
+
     if (this.deck && map) {
       if (this.options.registerEvents) {
         map.off('mousemove', this.onMouseMove, this);
@@ -285,8 +319,6 @@ class Renderer extends renderer.CanvasLayerRenderer {
     if (!this.canvas && !this.gl) {
       const map = this.getMap();
       const size = map.getSize();
-      // const width = size.width;
-      // const height = size.height;
       const retina = (map.getDevicePixelRatio ? map.getDevicePixelRatio() : getDevicePixelRatio()) || 1;
       const [width, height] = [retina * size.width, retina * size.height];
       this.canvas = canvas2d.createCanvas(width, height, map.CanvasClass);
@@ -358,10 +390,5 @@ class Renderer extends renderer.CanvasLayerRenderer {
 }
 
 DeckGLLayer.registerRenderer('webgl', Renderer);
-
-// export {
-//   DeckGLLayer,
-//   Renderer as DeckGLRender
-// };
 
 export default DeckGLLayer;
