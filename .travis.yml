@@ -1,9 +1,17 @@
 language: node_js
-node_js: node
 cache:
   directories:
     - node_modules
+
+node_js:
+  - "lts/*"
+branches:
+  only:
+    - master
+    - dev
+
 before_install: npm i -g yarn
-install: npm install
+install: yarn
 script:
-- yarn run build
+  - npm test
+  - ./node_modules/.bin/codecov

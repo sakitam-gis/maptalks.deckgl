@@ -1,0 +1,39 @@
+{
+  "name": "@salitam-gis/maptalks.deckgl",
+  "version": "1.0.0",
+  "author": "https://twitter.com/fuzhenn",
+  "homepage": "https://github.com/sakitam-gis/maptalks.deckgl",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/maptalks-deckgl.js",
+  "module": "dist/maptalks-deckgl.esm.js",
+  "unpkg": "dist/maptalks-deckgl.js",
+  "commonjs": "dist/maptalks-deckgl.cjs.js",
+  "typings": "dist/types/index.d.ts",
+  "namespace": "DeckGLLayer",
+  "scripts": {},
+  "bugs": {
+    "url": "https://github.com/sakitam-gis/maptalks.deckgl/issues"
+  },
+  "keywords": [
+    "deck.gl",
+    "maptalks",
+    "webgl",
+    "gis"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:sakitam-gis/maptalks.deckgl.git",
+    "directory": "packages/layers"
+  },
+  "peerDependencies": {
+    "@deck.gl/core": ">=8.0.0",
+    "maptalks": ">=0.45.1"
+  },
+  "devDependencies": {
+    "@deck.gl/core": "^8.0.0",
+    "maptalks": "^0.49.1"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+    "moduleResolution": "node",
+    "paths": {
+      "@/*": ["packages/*/src"],
+      "maptalks": ["maptalks/dist/maptalks.es.js"]
+    },
+    "target": "es5",
+    "module": "es2015",
+    "lib": ["es2015", "es2016", "es2017", "dom"],
+    "esModuleInterop": true,
+    "strictPropertyInitialization": false,
+    "strict": true,
+    "preserveSymlinks": true,
+    "declaration": false,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false,
+    "typeRoots": ["node_modules/@types"]
+  },
+  "include": [
+    "packages/*/src"
+  ],
+  "exclude": [
+    "packages/*/src/**/__tests__",
+    "packages/*/src/**/__mocks__"
+  ]
+}
