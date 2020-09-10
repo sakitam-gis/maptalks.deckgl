@@ -1,0 +1,41 @@
+{
+  "name": "site",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  },
+  "dependencies": {
+    "@pika/react": "^16.13.1",
+    "@pika/react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
+    "@loadable/component": "^5.13.1",
+    "@deck.gl/core": "^8.2.8",
+    "@deck.gl/geo-layers": "^8.2.8",
+    "@deck.gl/layers": "^8.2.8",
+    "@deck.gl/mesh-layers": "^8.2.8",
+    "@deck.gl/aggregation-layers": "^8.2.8",
+    "@mapbox/point-geometry": "^0.1.0",
+    "@mapbox/vector-tile": "^1.3.1",
+    "@loaders.gl/core": "^2.2.8",
+    "@loaders.gl/draco": "^2.2.8",
+    "@deck.gl/extensions": "^8.2.8",
+    "pbf": "^3.2.1",
+    "color": "^3.1.2",
+    "d3-request": "^1.0.6",
+    "d3-scale": "^3.2.2",
+    "maptalks": "^0.49.1"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-router-dom": "^5.1.5",
+    "typescript": "^3.9.3",
+    "less": "^3.12.2",
+    "vite": "^0.20.0",
+    "vite-plugin-react": "^2.0.0",
+    "postcss-url": "^8.0.0",
+    "postcss-import": "^12.0.1",
+    "autoprefixer": "^9.8.6"
+  }
+}

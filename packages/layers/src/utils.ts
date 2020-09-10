@@ -4,9 +4,9 @@
  * @param glOptions
  * @returns {null|*}
  */
-const createContext = function (canvas, glOptions = {}) {
+const createContext = function (canvas: HTMLCanvasElement, glOptions = {}) {
   if (!canvas) return null;
-  function onContextCreationError (error) {
+  function onContextCreationError (error: any) {
     console.log(error.statusMessage);
   }
 
@@ -22,6 +22,7 @@ const createContext = function (canvas, glOptions = {}) {
   return gl;
 };
 
+// @ts-ignore
 const devicePixelRatio = window.devicePixelRatio || window.screen.deviceXDPI / window.screen.logicalXDPI;
 
 function getDevicePixelRatio () {

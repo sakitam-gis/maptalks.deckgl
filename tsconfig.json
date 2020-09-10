@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "baseUrl": ".",
     "rootDir": ".",
     "moduleResolution": "node",
     "paths": {
       "@/*": ["packages/*/src"],
-      "maptalks": ["maptalks/dist/maptalks.es.js"]
+      "maptalks": ["maptalks/dist/maptalks.es.js"],
+      "@deck.gl/core": ["@deck.gl/core/dist/esm/index.js"]
     },
     "target": "es5",
     "module": "es2015",
@@ -25,7 +27,6 @@
     "packages/*/src"
   ],
   "exclude": [
-    "packages/*/src/**/__tests__",
-    "packages/*/src/**/__mocks__"
+    "packages/*/src/**/__tests__"
   ]
 }
