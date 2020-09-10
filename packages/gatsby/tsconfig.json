@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "types": [],
+    "allowJs": false,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "jsx": "react",
+    "module": "commonjs",
+    "target": "esnext",
+    "lib": ["dom", "es2015", "es2017"],
+    "strict": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "removeComments": false,
+    "preserveConstEnums": true
+  },
+  "include": ["src"]
+}
