@@ -13,6 +13,18 @@ const config: UserConfig = {
         'preprocess-custom-color': 'green'
       }
     }
+  },
+  optimizeDeps: {
+    exclude: [
+      // '@deck.gl/layers',
+      // '@deck.gl/geo-layers',
+      // '@deck.gl/core',
+      // '@deck.gl/mesh-layers',
+      // '@deck.gl/aggregation-layers',
+      // '@loaders.gl/core',
+      // '@loaders.gl/draco',
+      // '@loaders.gl/loader-utils'
+    ],
   }
 }
 

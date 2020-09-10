@@ -1583,98 +1583,116 @@
     hoist-non-react-statics "^3.3.1"
     react-is "^16.12.0"
 
-"@loaders.gl/3d-tiles@^2.2.3":
-  version "2.2.8"
-  resolved "https://registry.npm.taobao.org/@loaders.gl/3d-tiles/download/@loaders.gl/3d-tiles-2.2.8.tgz#20588105d6bd4b4cb21362e4ca268725d3e63d8c"
-  integrity sha1-IFiBBda9S0yyE2LkyiaHJdPmPYw=
+"@loaders.gl/3d-tiles@^2.2.3", "@loaders.gl/3d-tiles@^2.3.0-alpha.12":
+  version "2.3.0-alpha.12"
+  resolved "https://registry.npm.taobao.org/@loaders.gl/3d-tiles/download/@loaders.gl/3d-tiles-2.3.0-alpha.12.tgz#af7f5f298803523193f35b63408b4adc6f8ec64f"
+  integrity sha1-r39fKYgDUjGT81tjQItK3G+Oxk8=
   dependencies:
-    "@loaders.gl/core" "2.2.8"
-    "@loaders.gl/draco" "2.2.8"
-    "@loaders.gl/gltf" "2.2.8"
-    "@loaders.gl/loader-utils" "2.2.8"
-    "@loaders.gl/math" "2.2.8"
-    "@loaders.gl/tiles" "2.2.8"
+    "@loaders.gl/core" "2.3.0-alpha.12"
+    "@loaders.gl/draco" "2.3.0-alpha.12"
+    "@loaders.gl/gltf" "2.3.0-alpha.12"
+    "@loaders.gl/loader-utils" "2.3.0-alpha.12"
+    "@loaders.gl/math" "2.3.0-alpha.12"
+    "@loaders.gl/tiles" "2.3.0-alpha.12"
     "@math.gl/core" "^3.2.0"
     "@math.gl/geospatial" "^3.2.0"
     "@probe.gl/stats" "^3.3.0"
 
-"@loaders.gl/core@2.2.8", "@loaders.gl/core@^2.2.3", "@loaders.gl/core@^2.2.8":
-  version "2.2.8"
-  resolved "https://registry.npm.taobao.org/@loaders.gl/core/download/@loaders.gl/core-2.2.8.tgz#fb2060f3b90d3babe0de2a128fc5227f921c08ad"
-  integrity sha1-+yBg87kNO6vg3ioSj8Uif5IcCK0=
+"@loaders.gl/core@2.3.0-alpha.12", "@loaders.gl/core@^2.2.3", "@loaders.gl/core@^2.3.0-alpha.12":
+  version "2.3.0-alpha.12"
+  resolved "https://registry.npm.taobao.org/@loaders.gl/core/download/@loaders.gl/core-2.3.0-alpha.12.tgz#6bf8a73763f2cf0fb909322e0f6c613889b13954"
+  integrity sha1-a/inN2Pyzw+5CTIuD2xhOImxOVQ=
   dependencies:
     "@babel/runtime" "^7.3.1"
-    "@loaders.gl/loader-utils" "2.2.8"
+    "@loaders.gl/loader-utils" "2.3.0-alpha.12"
 
-"@loaders.gl/draco@2.2.8", "@loaders.gl/draco@^2.2.8":
-  version "2.2.8"
-  resolved "https://registry.npm.taobao.org/@loaders.gl/draco/download/@loaders.gl/draco-2.2.8.tgz#869fba552b520d5764ce9d030ed5ee8346a5d91b"
-  integrity sha1-hp+6VStSDVdkzp0DDtXug0al2Rs=
+"@loaders.gl/draco@2.3.0-alpha.12", "@loaders.gl/draco@^2.3.0-alpha.12":
+  version "2.3.0-alpha.12"
+  resolved "https://registry.npm.taobao.org/@loaders.gl/draco/download/@loaders.gl/draco-2.3.0-alpha.12.tgz#0fadbfe4f6e4081b063d23f55501936db031c1ad"
+  integrity sha1-D62/5PbkCBsGPSP1VQGTbbAxwa0=
   dependencies:
     "@babel/runtime" "^7.3.1"
-    "@loaders.gl/loader-utils" "2.2.8"
+    "@loaders.gl/loader-utils" "2.3.0-alpha.12"
     draco3d "^1.3.4"
 
-"@loaders.gl/gltf@2.2.8":
-  version "2.2.8"
-  resolved "https://registry.npm.taobao.org/@loaders.gl/gltf/download/@loaders.gl/gltf-2.2.8.tgz#b4e28992737a7ed4020086760a7d27d98873235d"
-  integrity sha1-tOKJknN6ftQCAIZ2Cn0n2YhzI10=
+"@loaders.gl/gis@2.3.0-alpha.12":
+  version "2.3.0-alpha.12"
+  resolved "https://registry.npm.taobao.org/@loaders.gl/gis/download/@loaders.gl/gis-2.3.0-alpha.12.tgz#0d2984f667f0dc7ff3ae2162b79e2fdd17993c72"
+  integrity sha1-DSmE9mfw3H/zriFit54v3ReZPHI=
   dependencies:
-    "@loaders.gl/core" "2.2.8"
-    "@loaders.gl/draco" "2.2.8"
-    "@loaders.gl/images" "2.2.8"
-    "@loaders.gl/loader-utils" "2.2.8"
+    "@loaders.gl/loader-utils" "2.3.0-alpha.12"
+    "@mapbox/vector-tile" "^1.3.1"
+    pbf "^3.2.1"
 
-"@loaders.gl/images@2.2.8", "@loaders.gl/images@^2.2.3":
+"@loaders.gl/gltf@2.3.0-alpha.12":
+  version "2.3.0-alpha.12"
+  resolved "https://registry.npm.taobao.org/@loaders.gl/gltf/download/@loaders.gl/gltf-2.3.0-alpha.12.tgz#a02f26c2af3e83bc58a55a054c86dff3b1181479"
+  integrity sha1-oC8mwq8+g7xYpVoFTIbf87EYFHk=
+  dependencies:
+    "@loaders.gl/core" "2.3.0-alpha.12"
+    "@loaders.gl/draco" "2.3.0-alpha.12"
+    "@loaders.gl/images" "2.3.0-alpha.12"
+    "@loaders.gl/loader-utils" "2.3.0-alpha.12"
+
+"@loaders.gl/images@2.3.0-alpha.12":
+  version "2.3.0-alpha.12"
+  resolved "https://registry.npm.taobao.org/@loaders.gl/images/download/@loaders.gl/images-2.3.0-alpha.12.tgz#b971c64a73cbc0f80d09631249125668a053667b"
+  integrity sha1-uXHGSnPLwPgNCWMSSRJWaKBTZns=
+  dependencies:
+    "@loaders.gl/loader-utils" "2.3.0-alpha.12"
+
+"@loaders.gl/images@^2.2.3":
   version "2.2.8"
   resolved "https://registry.npm.taobao.org/@loaders.gl/images/download/@loaders.gl/images-2.2.8.tgz#7db7781fcc3aa60f3cf1109370ea87ac5bf78ad0"
   integrity sha1-fbd4H8w6pg888RCTcOqHrFv3itA=
   dependencies:
     "@loaders.gl/loader-utils" "2.2.8"
 
-"@loaders.gl/loader-utils@2.2.8", "@loaders.gl/loader-utils@^2.2.3":
-  version "2.2.8"
-  resolved "https://registry.npm.taobao.org/@loaders.gl/loader-utils/download/@loaders.gl/loader-utils-2.2.8.tgz#9f12f3460260b15e961fa46c3d3c867d7bf48bee"
-  integrity sha1-nxLzRgJgsV6WH6RsPTyGfXv0i+4=
+"@loaders.gl/loader-utils@2.2.8", "@loaders.gl/loader-utils@2.3.0-alpha.12", "@loaders.gl/loader-utils@^2.2.3", "@loaders.gl/loader-utils@^2.3.0-alpha.12":
+  version "2.3.0-alpha.12"
+  resolved "https://registry.npm.taobao.org/@loaders.gl/loader-utils/download/@loaders.gl/loader-utils-2.3.0-alpha.12.tgz#eeff03001fe5849572d1cd5d5863bbb4680a5140"
+  integrity sha1-7v8DAB/lhJVy0c1dWGO7tGgKUUA=
   dependencies:
     "@babel/runtime" "^7.3.1"
     "@probe.gl/stats" "^3.3.0"
 
-"@loaders.gl/math@2.2.8":
-  version "2.2.8"
-  resolved "https://registry.npm.taobao.org/@loaders.gl/math/download/@loaders.gl/math-2.2.8.tgz#581f2e4e5898b5d755b6708949cd35e4eeb5d517"
-  integrity sha1-WB8uTliYtddVtnCJSc015O611Rc=
+"@loaders.gl/math@2.3.0-alpha.12":
+  version "2.3.0-alpha.12"
+  resolved "https://registry.npm.taobao.org/@loaders.gl/math/download/@loaders.gl/math-2.3.0-alpha.12.tgz#9d1773751a5d8448fdc18a90fabe4a8959a43f07"
+  integrity sha1-nRdzdRpdhEj9wYqQ+r5KiVmkPwc=
   dependencies:
-    "@loaders.gl/images" "2.2.8"
-    "@loaders.gl/loader-utils" "2.2.8"
+    "@loaders.gl/images" "2.3.0-alpha.12"
+    "@loaders.gl/loader-utils" "2.3.0-alpha.12"
     "@math.gl/core" "^3.2.0"
 
-"@loaders.gl/mvt@^2.2.3":
-  version "2.2.8"
-  resolved "https://registry.npm.taobao.org/@loaders.gl/mvt/download/@loaders.gl/mvt-2.2.8.tgz#137cc6a7e91b84e0f82412db493d0434d31dc967"
-  integrity sha1-E3zGp+kbhOD4JBLbST0ENNMdyWc=
+"@loaders.gl/mvt@^2.2.3", "@loaders.gl/mvt@^2.3.0-alpha.12":
+  version "2.3.0-alpha.12"
+  resolved "https://registry.npm.taobao.org/@loaders.gl/mvt/download/@loaders.gl/mvt-2.3.0-alpha.12.tgz#0fe95d88201d463a5a9dd0714fa757f6b6b21b10"
+  integrity sha1-D+ldiCAdRjpandBxT6dX9rayGxA=
   dependencies:
-    "@loaders.gl/loader-utils" "2.2.8"
+    "@loaders.gl/gis" "2.3.0-alpha.12"
+    "@loaders.gl/loader-utils" "2.3.0-alpha.12"
+    "@mapbox/point-geometry" "~0.1.0"
     "@mapbox/vector-tile" "^1.3.1"
     pbf "^3.2.1"
 
-"@loaders.gl/terrain@^2.2.3":
-  version "2.2.8"
-  resolved "https://registry.npm.taobao.org/@loaders.gl/terrain/download/@loaders.gl/terrain-2.2.8.tgz#4cf19c24eb79c938995bc9c8b14fb3ce55e12c87"
-  integrity sha1-TPGcJOt5yTiZW8nIsU+zzlXhLIc=
+"@loaders.gl/terrain@^2.2.3", "@loaders.gl/terrain@^2.3.0-alpha.12":
+  version "2.3.0-alpha.12"
+  resolved "https://registry.npm.taobao.org/@loaders.gl/terrain/download/@loaders.gl/terrain-2.3.0-alpha.12.tgz#c2e653dcee3a68a1b5a4330d5fade4cd750081c4"
+  integrity sha1-wuZT3O46aKG1pDMNX63kzXUAgcQ=
   dependencies:
     "@babel/runtime" "^7.3.1"
-    "@loaders.gl/loader-utils" "2.2.8"
+    "@loaders.gl/loader-utils" "2.3.0-alpha.12"
     "@mapbox/martini" "^0.2.0"
 
-"@loaders.gl/tiles@2.2.8", "@loaders.gl/tiles@^2.2.3":
-  version "2.2.8"
-  resolved "https://registry.npm.taobao.org/@loaders.gl/tiles/download/@loaders.gl/tiles-2.2.8.tgz#155351c8d014ac47b5fce923dfc16bee3889a84f"
-  integrity sha1-FVNRyNAUrEe1/Okj38Fr7jiJqE8=
+"@loaders.gl/tiles@2.3.0-alpha.12", "@loaders.gl/tiles@^2.2.3", "@loaders.gl/tiles@^2.3.0-alpha.12":
+  version "2.3.0-alpha.12"
+  resolved "https://registry.npm.taobao.org/@loaders.gl/tiles/download/@loaders.gl/tiles-2.3.0-alpha.12.tgz#ae963d7d03c8649195a114b311777ebdb81b50e2"
+  integrity sha1-rpY9fQPIZJGVoRSzEXd+vbgbUOI=
   dependencies:
-    "@loaders.gl/core" "2.2.8"
-    "@loaders.gl/loader-utils" "2.2.8"
-    "@loaders.gl/math" "2.2.8"
+    "@loaders.gl/core" "2.3.0-alpha.12"
+    "@loaders.gl/loader-utils" "2.3.0-alpha.12"
+    "@loaders.gl/math" "2.3.0-alpha.12"
     "@math.gl/core" "^3.2.0"
     "@math.gl/culling" "^3.2.0"
     "@math.gl/geospatial" "^3.2.0"
