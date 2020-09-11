@@ -5,7 +5,7 @@ const rollup = require('rollup')
 const chalk = require('chalk')
 const zlib = require('zlib')
 const rimraf = require('rimraf')
-const typescript = require('@rollup/plugin-typescript')
+const typescript = require('rollup-plugin-typescript2')
 const { terser } = require('rollup-plugin-terser')
 const execa = require('execa')
 const ora = require('ora')
@@ -14,11 +14,10 @@ const spinner = ora({
 })
 
 function getPackagesName () {
-  let ret
-  let all = fs.readdirSync(resolve('packages'))
+  const all = fs.readdirSync(resolve('packages'))
   // drop hidden file whose name is startWidth '.'
   // drop packages which would not be published(eg: examples and docs)
-  ret = all
+  const ret = all
     .filter(name => {
       const isHiddenFile = /^\./g.test(name)
       return !isHiddenFile
@@ -30,7 +29,7 @@ function getPackagesName () {
   return ret
 }
 
-function cleanPackagesOldDist(packagesName) {
+function cleanPackagesOldDist (packagesName) {
   packagesName.forEach(name => {
     const distPath = resolve(`packages/${name}/dist`)
     const typePath = resolve(`packages/${name}/dist/types`)
@@ -44,14 +43,14 @@ function cleanPackagesOldDist(packagesName) {
   })
 }
 
-function resolve(p) {
+function resolve (p) {
   return path.resolve(__dirname, '../', p)
 }
 
-function PascalCase(pkg, str) {
+function PascalCase (pkg, str) {
   if (pkg.namespace) return pkg.namespace;
-  const re=/-(\w)/g;
-  const newStr = str.replace(re, function (match, group1){
+  const re = /-(\w)/g;
+  const newStr = str.replace(re, function (match, group1) {
     return group1.toUpperCase();
   })
   return newStr.charAt(0).toUpperCase() + newStr.slice(1);
@@ -70,7 +69,7 @@ const generateBanner = (json) => {
 
 const generatePackageName = (name) => {
   if (typeof name === 'string') {
-    let arr_ = name.split('/');
+    const arr_ = name.split('/');
     const fileName = arr_[arr_.length - 1];
     const ext = fileName.split('.');
     if (ext.length > 1) {
@@ -84,15 +83,15 @@ const generatePackageName = (name) => {
 const buildType = [
   {
     format: 'umd',
-    ext: '.js',
+    ext: '.js'
   },
   {
     format: 'umd',
-    ext: '.min.js',
+    ext: '.min.js'
   },
   {
     format: 'cjs',
-    ext: '.cjs.js',
+    ext: '.cjs.js'
   },
   {
     format: 'es',
@@ -100,21 +99,29 @@ const buildType = [
   }
 ]
 
-function generateBuildConfigs(packagesName) {
+function generateBuildConfigs (packagesName) {
   const result = []
   packagesName.forEach(name => {
     const json = fs.readJsonSync(resolve(`packages/${name}/package.json`));
     const fileName = generatePackageName(json.main);
     buildType.forEach((type) => {
-      let config = {
+      const config = {
         input: resolve(`packages/${name}/src/index.ts`),
         output: {
           file: resolve(`packages/${name}/dist/${fileName}${type.ext}`),
           name: PascalCase(json, name),
           format: type.format,
           banner: generateBanner(json),
+          globals: {
+            maptalks: 'maptalks',
+            '@deck.gl/core': 'deck'
+          }
         },
-        plugins: generateBuildPluginsConfigs(type.ext.indexOf('min')>-1, name)
+        external: [
+          'maptalks',
+          '@deck.gl/core'
+        ],
+        plugins: generateBuildPluginsConfigs(name, type.ext.indexOf('min') > -1, name)
       }
 
       if (name === 'layers' && config.output.format !== 'es' && config.output.format !== 'cjs') {
@@ -128,10 +135,10 @@ function generateBuildConfigs(packagesName) {
       // rollup will valiate config properties of config own and output a warning.
       // put packageName in prototype to ignore warning.
       Object.defineProperties(config, {
-        'packageName': {
-          value: name
+        packageName: {
+          value: fileName
         },
-        'ext': {
+        ext: {
           value: type.ext
         }
       })
@@ -140,10 +147,10 @@ function generateBuildConfigs(packagesName) {
   })
   return result
 }
-function generateBuildPluginsConfigs(isMin) {
+function generateBuildPluginsConfigs (name, isMin) {
   const tsConfig = {
-    // verbosity: -1,
-    tsconfig: path.resolve(__dirname, '../tsconfig.json'),
+    verbosity: -1,
+    tsconfig: path.join(__dirname, '../packages/', name, '/tsconfig.json')
   }
   const plugins = []
   if (isMin) {
@@ -153,12 +160,12 @@ function generateBuildPluginsConfigs(isMin) {
   return plugins
 }
 
-function build(builds) {
+function build (builds) {
   let built = 0
   const total = builds.length
   const next = () => {
     buildEntry(builds[built], built + 1, () => {
-      builds[built-1] = null
+      builds[built - 1] = null
       built++
       if (built < total) {
         next()
@@ -168,7 +175,7 @@ function build(builds) {
   next()
 }
 
-function buildEntry(config, curIndex, next) {
+function buildEntry (config, curIndex, next) {
   const isProd = /min\.js$/.test(config.output.file)
 
   spinner.start(`${config.packageName}${config.ext} is buiding now. \n`)
@@ -179,14 +186,14 @@ function buildEntry(config, curIndex, next) {
 
       spinner.succeed(`${config.packageName}${config.ext} building has ended.`)
 
-      function report(extra) {
+      function report (extra) {
         console.log(chalk.magenta(path.relative(process.cwd(), config.output.file)) + ' ' + getSize(code) + (extra || ''))
         next()
       }
       if (isProd) {
         zlib.gzip(code, (err, zipped) => {
-          if (err) return reject(err)
-          let words =  `(gzipped: ${chalk.magenta(getSize(zipped))})`
+          if (err) return err;
+          const words = `(gzipped: ${chalk.magenta(getSize(zipped))})`
           report(words)
         })
       } else {
@@ -196,7 +203,7 @@ function buildEntry(config, curIndex, next) {
       // since we need bundle code for three types
       // just generate .d.ts only once
       if (curIndex % 3 === 0) {
-        // copyDTSFiles(config.packageName)
+        generateDTSFiles(config.packageName)
       }
     })
   }).catch((e) => {
@@ -205,17 +212,13 @@ function buildEntry(config, curIndex, next) {
   })
 }
 
-function copyDTSFiles (packageName) {
-  console.log(chalk.cyan('> start copying .d.ts file to dist dir of packages own.'))
-  const sourceDir = resolve(`packages/${packageName}/dist/packages/${packageName}/src/*`)
-  const targetDir = resolve(`packages/${packageName}/dist/types/`)
-  execa.commandSync(`mv ${sourceDir} ${targetDir}`, { shell: true })
-  console.log(chalk.cyan('> copy job is done.'))
-  rimraf.sync(resolve(`packages/${packageName}/dist/packages`))
-  rimraf.sync(resolve(`packages/${packageName}/dist/node_modules`))
+function generateDTSFiles () {
+  console.log(chalk.cyan('> start generate .d.ts file to dist dir of packages own.'))
+  execa.commandSync('yarn run tsc', { shell: true })
+  console.log(chalk.cyan('> generate job is done.'))
 }
 
-function getSize(code) {
+function getSize (code) {
   return (code.length / 1024).toFixed(2) + 'kb'
 }
 
@@ -242,7 +245,7 @@ const getAnswersFromInquirer = async (packagesName) => {
   }
 
   // chose 'all' option
-  if (packages.some(package => package === 'all')) {
+  if (packages.some(pkg => pkg === 'all')) {
     packages = getPackagesName()
   }
   const { yes } = await inquirer.prompt([{
@@ -273,9 +276,20 @@ const buildBootstrap = async () => {
   const buildConfigs = generateBuildConfigs(answers)
 
   build(buildConfigs)
-
 }
-buildBootstrap().catch(err => {
-  console.error(err)
-  process.exit(1)
-})
+
+if (process.env.INQUIRER !== 'false') {
+  buildBootstrap().catch(err => {
+    console.error(err)
+    process.exit(1)
+  });
+} else {
+  const modulePath = process.env.modulePath;
+  if (!modulePath) return
+
+  cleanPackagesOldDist([modulePath])
+
+  const buildConfigs = generateBuildConfigs([modulePath])
+
+  build(buildConfigs)
+}

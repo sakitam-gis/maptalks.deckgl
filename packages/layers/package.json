@@ -12,7 +12,11 @@
   "commonjs": "dist/maptalks-deckgl.cjs.js",
   "typings": "dist/types/index.d.ts",
   "namespace": "DeckGLLayer",
-  "scripts": {},
+  "scripts": {
+    "tsc": "tsc --project tsconfig.json --declaration --declarationDir dist/types",
+    "build": "cross-env modulePath=layers INQUIRER=false node ../../scripts/build.js",
+    "release": "cross-env modulePath=layers INQUIRER=false node ../../scripts/release.js"
+  },
   "bugs": {
     "url": "https://github.com/sakitam-gis/maptalks.deckgl/issues"
   },
