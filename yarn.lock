@@ -3731,6 +3731,30 @@
     "@types/keygrip" "*"
     "@types/node" "*"
 
+"@types/d3-dsv@*":
+  version "1.0.36"
+  resolved "https://registry.npm.taobao.org/@types/d3-dsv/download/@types/d3-dsv-1.0.36.tgz#e91129d7c02b1b814838d001e921e8b9a67153d0"
+  integrity sha1-6REp18ArG4FIONAB6SHouaZxU9A=
+
+"@types/d3-request@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.npm.taobao.org/@types/d3-request/download/@types/d3-request-1.0.5.tgz#a2717ab95cd1e504662f52802aff1476af38cce4"
+  integrity sha1-onF6uVzR5QRmL1KAKv8Udq84zOQ=
+  dependencies:
+    "@types/d3-dsv" "*"
+
+"@types/d3-scale@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.npm.taobao.org/@types/d3-scale/download/@types/d3-scale-2.2.0.tgz#e5987a2857365823eb26ed5eb21bc566c4dcf1c0"
+  integrity sha1-5Zh6KFc2WCPrJu1eshvFZsTc8cA=
+  dependencies:
+    "@types/d3-time" "*"
+
+"@types/d3-time@*":
+  version "1.0.10"
+  resolved "https://registry.npm.taobao.org/@types/d3-time/download/@types/d3-time-1.0.10.tgz#d338c7feac93a98a32aac875d1100f92c7b61f4f"
+  integrity sha1-0zjH/qyTqYoyqsh10RAPkse2H08=
+
 "@types/debug@^0.0.30":
   version "0.0.30"
   resolved "https://registry.npm.taobao.org/@types/debug/download/@types/debug-0.0.30.tgz#dc1e40f7af3b9c815013a7860e6252f6352a84df"

@@ -272,6 +272,9 @@ export class Renderer extends renderer.CanvasLayerRenderer implements IRenderer 
       onLoad: () => {
         this.isLoad = true;
         this.repaintDeck();
+        setTimeout(() => {
+          this.setToRedraw();
+        }, 100);
       }
     };
 
@@ -411,6 +414,10 @@ export class Renderer extends renderer.CanvasLayerRenderer implements IRenderer 
 
   setCanvasUpdated() {
     return super.setCanvasUpdated();
+  }
+
+  setToRedraw() {
+    super.setToRedraw();
   }
 }
 

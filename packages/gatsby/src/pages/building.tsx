@@ -1,6 +1,5 @@
-import React from 'react';
-import DeckGLLayer from '../../../layers/src/index';
-import Base from './Base';
+import DeckGLLayer from '../../../layers/';
+import Base from './base';
 import { PolygonLayer } from '@deck.gl/layers';
 import { TripsLayer } from '@deck.gl/geo-layers';
 import { AmbientLight, PointLight, LightingEffect } from '@deck.gl/core';

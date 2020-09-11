@@ -69,3 +69,4 @@ declare module '@deck.gl/layers';
 declare module '@deck.gl/core';
 declare module '@deck.gl/geo-layers';
 declare module '@luma.gl/core';
+declare module '@loaders.gl/3d-tiles';
