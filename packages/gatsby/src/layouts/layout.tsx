@@ -78,7 +78,7 @@ const Layout: React.FC<LayoutProps> = ({ children, location }) => {
       <footer className={styles.footer}>
         © {new Date().getFullYear()}, Built with
         {` `}
-        <a href="https://www.gatsbyjs.org">sakitam-gis</a>
+        <a href="https://www.gatsbyjs.org">gatsbyjs</a>
       </footer>
     </>
   );

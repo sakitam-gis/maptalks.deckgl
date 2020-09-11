@@ -20,8 +20,8 @@ const _options = {
 };
 
 const originProps = {
-  useDevicePixels: true,
-  autoResizeDrawingBuffer: false
+  // useDevicePixels: true,
+  // autoResizeDrawingBuffer: true
 };
 
 export enum CONST {
@@ -45,6 +45,11 @@ interface MTK {
   getBearing: () => number;
   on: (type: string, func: handleFunc, ctx: any) => void;
   off: (type: string, func: handleFunc, ctx: any) => void;
+  getDevicePixelRatio: () => number;
+  getSize: () => {
+    width: number;
+    height: number;
+  }
 }
 
 type IDeck = any;
@@ -79,6 +84,7 @@ function getViewState (map: MTK) {
 
 // FIXME: https://github.com/uber/luma.gl/blob/master/modules/webgl/src/context/context.js#L166
 function getViewport (deck: IDeck, map: MTK, useMapboxProjection = true) {
+  // const retina = (map.getDevicePixelRatio ? map.getDevicePixelRatio() : getDevicePixelRatio()) || 1;
   return new WebMercatorViewport(
     Object.assign(
       {
@@ -103,6 +109,17 @@ function getViewport (deck: IDeck, map: MTK, useMapboxProjection = true) {
   );
 }
 
+function proxyCanvas(canvas: HTMLCanvasElement, retina: number) {
+  Object.defineProperty(canvas, 'clientWidth', {
+    // writable: true,
+    get() { return canvas.width / retina; }
+  });
+  Object.defineProperty(canvas, 'clientHeight', {
+    // writable: true,
+    get() { return canvas.height / retina; }
+  });
+}
+
 export interface IOptions {
   [key: string]: any;
   doubleBuffer?: boolean;
@@ -115,7 +132,7 @@ export interface IOptions {
   opacity?: number;
   zIndex?: number;
   hitDetect?: boolean;
-  renderer?: 'canvas' | 'webgl';
+  renderer?: 'canvas' | 'gl';
   globalCompositeOperation?: string | null;
   cssFilter?: string | null;
   forceRenderOnMoving?: boolean;
@@ -176,6 +193,7 @@ export class Renderer extends renderer.CanvasLayerRenderer implements IRenderer 
   private gl: WebGLRenderingContext | WebGL2RenderingContext;
   private layer: DeckGLLayer;
   private isLoad: boolean;
+  private isProxyed: boolean;
   private deckInstance: any;
 
   draw () {
@@ -231,6 +249,9 @@ export class Renderer extends renderer.CanvasLayerRenderer implements IRenderer 
     const options = this.layer.options;
     const deckProps = {
       useDevicePixels: true,
+      useDevicePixelRatio: true,
+      autoResizeViewport: true,
+      autoResizeDrawingBuffer: true,
       _customRender: () => {
         this.setCanvasUpdated()
         if (props?.customRender) {
@@ -243,13 +264,6 @@ export class Renderer extends renderer.CanvasLayerRenderer implements IRenderer 
       parameters: {
         depthMask: true,
         depthTest: true,
-        blendFunc: [
-          this.gl.SRC_ALPHA,
-          this.gl.ONE_MINUS_SRC_ALPHA,
-          this.gl.ONE,
-          this.gl.ONE_MINUS_SRC_ALPHA
-        ],
-        blendEquation: this.gl.FUNC_ADD
       },
       userData: {
         isExternal: false,
@@ -262,6 +276,9 @@ export class Renderer extends renderer.CanvasLayerRenderer implements IRenderer 
     };
 
     if (!this.deckInstance && !this.isLoad) {
+      // FIXME: 为什么不直接使用canvas - 经过测试发现直接使用this.canvas也是可行的，但是在地图交互时 deck.gl
+      //  的清空逻辑无法和maptalks保持一致，会出现可视化图层显示问题（偏移），虽然直接使用gl实例也会出现可视化图层消失，但是整体观感要好一些。
+
       this.deckInstance = new Deck(Object.assign(deckProps, props, {
         gl: this.gl,
         width: false,
@@ -344,7 +361,7 @@ export class Renderer extends renderer.CanvasLayerRenderer implements IRenderer 
    * clear canvas
    */
   clearCanvas () {
-    if (!this.canvas) return;
+    if (!this.canvas || !this.gl) return;
     // eslint-disable-next-line no-bitwise
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
   }
@@ -373,12 +390,19 @@ export class Renderer extends renderer.CanvasLayerRenderer implements IRenderer 
     super.remove();
   }
 
-  getMap() {
+  getMap(): MTK {
     return super.getMap();
   }
 
   prepareCanvas() {
-    return super.prepareCanvas();
+    const cv = super.prepareCanvas();
+    if (!this.isProxyed && this.canvas) {
+      const map = this.getMap();
+      const retina = (map.getDevicePixelRatio ? map.getDevicePixelRatio() : getDevicePixelRatio()) || 1;
+      proxyCanvas(this.canvas, retina);
+      this.isProxyed = true;
+    }
+    return cv;
   }
 
   completeRender() {
