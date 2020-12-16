@@ -21,12 +21,8 @@ npm run build / yarn run build
 
 ## install
 
-> v1.0.0 `npm i maptalks.deckgl`
+> v1.0.0 `npm i @sakitam-gis/maptalks.deckgl`
 
-依赖 deck.gl 相关引用的 `7.3.0` 以上版本;
-已知问题：高清屏图形会错位；
-
-临时解决方案：指定devicePixelRatio为 1
 
 ```js
 this.map = new maptalks.Map(this.container, {
@@ -39,7 +35,6 @@ this.map = new maptalks.Map(this.container, {
   baseLayer: new maptalks.TileLayer('tile', {
     urlTemplate: `https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}${getDevicePixelRatio() > 1.5 ? '@2x' : ''}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg`
   }),
-  devicePixelRatio: 1 // 指定devicePixelRatio为 1
 });
 ```
 
