@@ -77,7 +77,8 @@
     "prismjs": "^1.17.1",
     "slash": "^3.0.0",
     "slick-carousel": "^1.8.1",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "stats.js": "^0.17.0"
   },
   "devDependencies": {
     "prettier": "2.1.1",
@@ -89,7 +90,9 @@
     "@types/react-github-button": "^0.1.0",
     "@types/react-helmet": "^6.0.0",
     "@types/d3-scale": "^2.2.0",
-    "@types/d3-request": "^1.0.5"
+    "@types/d3-request": "^1.0.5",
+    "@types/stats.js": "^0.17.0",
+    "@types/color": "^3.0.1"
   },
   "release-it": {
     "git": {

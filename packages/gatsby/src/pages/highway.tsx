@@ -1,4 +1,4 @@
-import DeckGLLayer from '../../../layers/';
+import DeckGLLayer from '@salitam-gis/maptalks.deckgl';
 import Base from './base';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { scaleLinear, scaleThreshold } from 'd3-scale';
@@ -89,7 +89,10 @@ class Highway extends Base {
         }, {
           animation: false,
           forceRenderOnMoving: true,
-          forceRenderOnZooming: true
+          forceRenderOnZooming: true,
+          renderStart: () => {
+            // this.renderState?.update();
+          },
         });
 
         this.map.addLayer(this.deckLayer);

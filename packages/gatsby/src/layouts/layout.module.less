@@ -14,55 +14,58 @@ code {
   monospace;
 }
 
-body, html, #root {
-  color: #323232;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background-size: cover;
-  background-color: #030408;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+:global {
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0
-}
+  body, html, #root {
+    color: #323232;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-size: cover;
+    background-color: #030408;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-ul, li {
-  list-style: none;
-}
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0
+  }
 
-.clearfix {
-  *zoom: 1;
-}
+  ul, li {
+    list-style: none;
+  }
 
-.clearfix:after {
-  visibility: hidden;
-  display: block;
-  font-size: 0;
-  content: " ";
-  clear: both;
-  height: 0;
-}
+  .clearfix {
+    *zoom: 1;
+  }
 
-:focus {
-  outline: none;
-}
+  .clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
 
-a {
-  text-decoration: none;
-  outline: none;
-  color: #fff;
-}
+  :focus {
+    outline: none;
+  }
 
-.pull-left {
-  float: left !important;
-}
+  a {
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+  }
 
-.pull-right {
-  float: right !important;
+  .pull-left {
+    float: left !important;
+  }
+
+  .pull-right {
+    float: right !important;
+  }
 }

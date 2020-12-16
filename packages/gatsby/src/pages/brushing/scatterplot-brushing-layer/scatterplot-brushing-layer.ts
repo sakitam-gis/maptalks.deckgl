@@ -1,3 +1,4 @@
+// @ts-ignore
 import { ScatterplotLayer } from '@deck.gl/layers';
 
 import scatterplotVertex from './scatterplot-brushing-layer-vertex.glsl';
@@ -11,10 +12,14 @@ const defaultProps = {
   // brush radius in meters
   brushRadius: 100000,
   mousePosition: [0, 0],
-  getTargetPosition: d => d.target
+  getTargetPosition: (d: { target: any; }) => d.target
 };
 
 export default class ScatterplotBrushingLayer extends ScatterplotLayer {
+  private state: any;
+  private props: any;
+  static layerName: string;
+  static defaultProps: any;
   getShaders () {
     // get customized shaders
     return Object.assign({}, super.getShaders(), {
@@ -38,12 +43,13 @@ export default class ScatterplotBrushingLayer extends ScatterplotLayer {
     });
   }
 
-  draw (opts) {
+  draw (opts: any) {
     // add uniforms
     const uniforms = Object.assign({}, opts.uniforms, {
       brushTarget: this.props.brushTarget,
       brushRadius: this.props.brushRadius,
       mousePos: this.props.mousePosition
+        // @ts-ignore
         ? new Float32Array(this.unproject(this.props.mousePosition))
         : defaultProps.mousePosition,
       enableBrushing: Boolean(this.props.enableBrushing)
@@ -53,7 +59,10 @@ export default class ScatterplotBrushingLayer extends ScatterplotLayer {
   }
 
   // calculate instanceSourcePositions
-  calculateInstanceTargetPositions (attribute) {
+  calculateInstanceTargetPositions (attribute: {
+    value: number[];
+    size: number;
+  }) {
     const { data, getTargetPosition } = this.props;
     const { value, size } = attribute;
     let point;

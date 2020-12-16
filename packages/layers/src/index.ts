@@ -140,6 +140,9 @@ export interface IOptions {
   forceRenderOnRotating?: boolean;
 
   registerEvents?: boolean;
+
+  renderStart?: () => void;
+  renderEnd?: () => void;
 }
 
 export interface IProps {
@@ -197,6 +200,9 @@ export class Renderer extends renderer.CanvasLayerRenderer implements IRenderer 
   private deckInstance: any;
 
   draw () {
+    if (this.layer.options?.renderStart) {
+      this.layer.options?.renderStart()
+    }
     this.prepareCanvas();
     this.renderInner();
   }
@@ -300,6 +306,10 @@ export class Renderer extends renderer.CanvasLayerRenderer implements IRenderer 
       this.deckInstance.setProps(Object.assign(deckProps, props));
       this.deckInstance.props.userData.isExternal = true;
       this.repaintDeck();
+    }
+
+    if (this.layer.options?.renderEnd) {
+      this.layer.options?.renderEnd()
     }
 
     this.completeRender();

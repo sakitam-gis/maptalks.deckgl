@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.prod.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "declaration": false
+    "declaration": true,
+    "declarationDir": "dist/types"
   },
   "include": [
     "src"

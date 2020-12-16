@@ -1,4 +1,4 @@
-import DeckGLLayer from '../../../layers/';
+import DeckGLLayer from '@salitam-gis/maptalks.deckgl';
 import Base from './base';
 import { PolygonLayer } from '@deck.gl/layers';
 import { TripsLayer } from '@deck.gl/geo-layers';
@@ -124,6 +124,7 @@ class Building extends Base {
     } else if (this.deckLayer) {
       this.deckLayer.setProps(props);
     }
+    this.renderState?.update();
     window.requestAnimationFrame(this._animate);
   };
 }

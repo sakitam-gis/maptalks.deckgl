@@ -34,13 +34,13 @@ export default class FpsComponents extends React.Component<IProps, IState> {
       if(frameCounterArray.length > ((width as number) / 2)){
         frameCounterArray.shift();
       }
-      const retuenObject = {
+      const returnObject = {
         saveTime: Date.now(),
         frameCounterArray: frameCounterArray,
         fpsRate: FpsComponents.frameCounter,
       }
       FpsComponents.frameCounter = 1;
-      return retuenObject;
+      return returnObject;
     }
     FpsComponents.frameCounter = FpsComponents.frameCounter + 1;
     return null;

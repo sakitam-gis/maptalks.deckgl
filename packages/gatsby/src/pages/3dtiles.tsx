@@ -1,6 +1,6 @@
-import DeckGLLayer from '../../../layers/';
+import DeckGLLayer from '@salitam-gis/maptalks.deckgl';
 import Base from './base';
-import {Tile3DLayer} from '@deck.gl/geo-layers';
+import { Tile3DLayer } from '@deck.gl/geo-layers';
 
 import { CesiumIonLoader } from '@loaders.gl/3d-tiles';
 

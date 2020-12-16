@@ -1,3 +1,4 @@
+// @ts-ignore
 import { ArcLayer } from '@deck.gl/layers';
 
 import arcVertex from './arc-brushing-layer-vertex.glsl';
@@ -10,13 +11,16 @@ const defaultProps = {
   // show arc if target is in brush
   brushTarget: true,
   enableBrushing: true,
-  getStrokeWidth: d => d.strokeWidth,
+  getStrokeWidth: (d: { strokeWidth: any; }) => d.strokeWidth,
   // brush radius in meters
   brushRadius: 100000,
   mousePosition: [0, 0]
 };
 
 export default class ArcBrushingLayer extends ArcLayer {
+  static layerName: string;
+  static defaultProps: any;
+  private props: any;
   getShaders () {
     // use customized shaders
     return Object.assign({}, super.getShaders(), {
@@ -25,13 +29,14 @@ export default class ArcBrushingLayer extends ArcLayer {
     });
   }
 
-  draw (opts) {
+  draw (opts: any) {
     // add uniforms
     const uniforms = Object.assign({}, opts.uniforms, {
       brushSource: this.props.brushSource,
       brushTarget: this.props.brushTarget,
       brushRadius: this.props.brushRadius,
       mousePos: this.props.mousePosition
+        // @ts-ignore
         ? new Float32Array(this.unproject(this.props.mousePosition))
         : defaultProps.mousePosition,
       enableBrushing: this.props.enableBrushing
