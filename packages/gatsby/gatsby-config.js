@@ -6,6 +6,7 @@ const { name, description, author } = JSON.parse(
 );
 
 module.exports = {
+  pathPrefix: '/maptalks.deckgl',
   siteMetadata: {
     title: `maptalks deckgl demo` || name,
     description: `a maptalks deckgl website` || description,

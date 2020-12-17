@@ -1,4 +1,4 @@
-import { PolygonLayer } from '@deck.gl/layers';
+import { PolygonLayer, PathLayer } from '@deck.gl/layers';
 // @ts-ignore
 import { TileLayer } from '@deck.gl/geo-layers';
 import DeckGLLayer from 'maptalks.deckgl';
@@ -59,7 +59,7 @@ class Vector extends Base {
 
             // getTileData
             data: [
-              'http://localhost:3333/osm/{z}/{x}/{y}.json',
+              'https://sakitam-fdd.cn/github/osm-proxy/osm/{z}/{x}/{y}.json',
               // 'https://a.data.osmbuildings.org/0.2/ph2apjye/tile/{z}/{x}/{y}.json',
               // 'https://b.data.osmbuildings.org/0.2/ph2apjye/tile/{z}/{x}/{y}.json',
               // 'https://c.data.osmbuildings.org/0.2/ph2apjye/tile/{z}/{x}/{y}.json'
@@ -76,11 +76,9 @@ class Vector extends Base {
             minZoom: 0,
             tileSize: 512 / devicePixelRatio,
             renderSubLayers: (props: any) => {
-              // const {
-              //   bbox: {west, south, east, north}
-              // } = props.tile;
-
-              console.log(props)
+              const {
+                bbox: {west, south, east, north}
+              } = props.tile;
 
               return [
                 new PolygonLayer({
@@ -122,6 +120,14 @@ class Vector extends Base {
                     numberOfLights: 3
                   },
                 }),
+                new PathLayer({
+                  id: `${props.id}-border`,
+                  visible: props.visible,
+                  data: [[[west, north], [west, south], [east, south], [east, north], [west, north]]],
+                  getPath: (d: any) => d,
+                  getColor: [255, 0, 0],
+                  widthMinPixels: 4
+                })
               ];
             }
           })

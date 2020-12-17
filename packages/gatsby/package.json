@@ -11,13 +11,14 @@
     "access": "public"
   },
   "scripts": {
-    "build": "gatsby build",
+    "build": "gatsby build --prefix-paths",
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "npm run develop",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "release": "release-it",
+    "deploy": "gh-pages -d public",
     "type-check": "tsc"
   },
   "repository": {
@@ -81,6 +82,7 @@
     "stats.js": "^0.17.0"
   },
   "devDependencies": {
+    "gh-pages": "^3.1.0",
     "prettier": "2.1.1",
     "@types/classnames": "^2.2.9",
     "@types/lodash": "^4.14.161",

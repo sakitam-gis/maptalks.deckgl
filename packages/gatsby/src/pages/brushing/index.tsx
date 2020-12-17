@@ -1,4 +1,3 @@
-import * as React from 'react';
 import DeckGLLayer from 'maptalks.deckgl';
 import { ScatterplotLayer, ArcLayer } from '@deck.gl/layers';
 // @ts-ignore

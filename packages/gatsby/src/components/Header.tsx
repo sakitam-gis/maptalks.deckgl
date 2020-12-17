@@ -16,6 +16,7 @@ const Header: React.FC<HeaderProps> = ({}) => {
   return (
     <div className="header clearfix">
       <div className="navbar-collapse clearfix">
+        <h4 className="navbar-left">maptalks.deckgl</h4>
         <ul className="nav navbar-nav navbar-right">
           <li id="nav-github">
             <a href="https://github.com/sakitam-gis/maptalks.deckgl" target="_blank">

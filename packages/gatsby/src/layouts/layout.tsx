@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { useStaticQuery, graphql, withPrefix } from 'gatsby';
-import Seo from '../components/Seo';
+import { withPrefix } from 'gatsby';
 import Header from '../components/Header';
 import PageLoading from '../components/PageLoading';
 import styles from './layout.module.less';
@@ -11,38 +10,13 @@ interface LayoutProps {
   pageContext: any;
 }
 
-function parseNulltoUndefined<T>(value: T) {
-  if (value === null) {
-    return undefined;
-  }
-  return value;
-}
-
 const Layout: React.FC<LayoutProps> = ({ children, location }) => {
   // https://github.com/gatsbyjs/gatsby/issues/13867#issuecomment-489481343
   if (location.pathname.includes('offline-plugin-app-shell-fallback')) {
     return <PageLoading />;
   }
-  const query = graphql`
-    query SiteTitleQuery {
-      site {
-        siteMetadata {
-          title
-        }
-      }
-    }
-  `;
-  const { site, locales } = useStaticQuery(query);
-  const {
-    siteMetadata: {
-      title,
-      logoUrl = '',
-    },
-  } = site;
 
-  let resources = {};
   try {
-    resources = JSON.parse(locales.internal.content);
   } catch (e) {
     // empty
   }
@@ -59,20 +33,8 @@ const Layout: React.FC<LayoutProps> = ({ children, location }) => {
   ) {
     return children;
   }
-
-  const logoProps = logoUrl
-    ? {
-      logo: {
-        img: <img src={logoUrl} alt="logo" />,
-      },
-    }
-    : {};
-
   return (
     <>
-      <Seo
-        title={title}
-      />
       <Header />
       <main className={styles.main}>{children}</main>
       <footer className={styles.footer}>
