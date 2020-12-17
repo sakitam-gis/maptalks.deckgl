@@ -1,4 +1,4 @@
-import DeckGLLayer from '@salitam-gis/maptalks.deckgl';
+import DeckGLLayer from 'maptalks.deckgl';
 import Base from './base';
 import { PolygonLayer } from '@deck.gl/layers';
 import { TripsLayer } from '@deck.gl/geo-layers';

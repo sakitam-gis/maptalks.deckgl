@@ -1,4 +1,4 @@
-import DeckGLLayer from '@salitam-gis/maptalks.deckgl';
+import DeckGLLayer from 'maptalks.deckgl';
 import Base from './base';
 import { Tile3DLayer } from '@deck.gl/geo-layers';
 

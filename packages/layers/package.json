@@ -1,6 +1,6 @@
 {
-  "name": "@sakitam-gis/maptalks.deckgl",
-  "version": "1.0.0",
+  "name": "maptalks.deckgl",
+  "version": "1.1.0",
   "author": "https://twitter.com/fuzhenn",
   "homepage": "https://github.com/sakitam-gis/maptalks.deckgl",
   "publishConfig": {
@@ -16,7 +16,9 @@
     "tsc": "tsc --project tsconfig.json --declaration --declarationDir dist/types",
     "dev": "cross-env yarn-or-npm bili --watch --env.NODE_ENV production",
     "build": "cross-env yarn-or-npm bili --env.NODE_ENV production",
-    "release": "cross-env modulePath=layers INQUIRER=false node ../../scripts/release.js"
+    "release": "cross-env modulePath=layers INQUIRER=false node ../../scripts/release.js",
+    "docs": "typedoc --out docs/api --theme minimal --mode file",
+    "test": "jest"
   },
   "bugs": {
     "url": "https://github.com/sakitam-gis/maptalks.deckgl/issues"
@@ -39,6 +41,8 @@
   },
   "devDependencies": {
     "@deck.gl/core": "^8.2.8",
-    "maptalks": "^0.49.1"
+    "@luma.gl/test-utils": "^8.4.0-alpha.1",
+    "maptalks": "^0.49.1",
+    "typedoc": "^0.19.2"
   }
 }

@@ -1,4 +1,4 @@
-import DeckGLLayer from '@salitam-gis/maptalks.deckgl';
+import DeckGLLayer from 'maptalks.deckgl';
 import Base from './base';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { scaleLinear, scaleThreshold } from 'd3-scale';

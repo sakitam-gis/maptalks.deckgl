@@ -1,4 +1,4 @@
-import DeckGLLayer from '@salitam-gis/maptalks.deckgl';
+import DeckGLLayer from 'maptalks.deckgl';
 import {LineLayer, ScatterplotLayer} from '@deck.gl/layers';
 // @ts-ignore
 import GL from '@luma.gl/constants';

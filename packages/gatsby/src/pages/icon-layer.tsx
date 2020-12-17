@@ -1,4 +1,4 @@
-import DeckGLLayer from '@salitam-gis/maptalks.deckgl';
+import DeckGLLayer from 'maptalks.deckgl';
 import { IconLayer } from '@deck.gl/layers';
 import Base from "./base";
 import React from "react";

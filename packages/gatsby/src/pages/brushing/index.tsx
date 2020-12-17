@@ -1,5 +1,5 @@
 import * as React from 'react';
-import DeckGLLayer from '@salitam-gis/maptalks.deckgl';
+import DeckGLLayer from 'maptalks.deckgl';
 import { ScatterplotLayer, ArcLayer } from '@deck.gl/layers';
 // @ts-ignore
 import { BrushingExtension } from '@deck.gl/extensions';

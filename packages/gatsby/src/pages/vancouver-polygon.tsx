@@ -1,4 +1,4 @@
-import DeckGLLayer from '@salitam-gis/maptalks.deckgl';
+import DeckGLLayer from 'maptalks.deckgl';
 import {GeoJsonLayer, PolygonLayer} from '@deck.gl/layers';
 import {LightingEffect, AmbientLight, _SunLight as SunLight} from '@deck.gl/core';
 import Base from "./base";

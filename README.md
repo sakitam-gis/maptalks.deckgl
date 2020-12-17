@@ -21,29 +21,16 @@ npm run build / yarn run build
 
 ## install
 
-> v1.0.0 `npm i @sakitam-gis/maptalks.deckgl`
-
-
-```js
-this.map = new maptalks.Map(this.container, {
-  center: [INITIAL_VIEW_STATE.longitude, INITIAL_VIEW_STATE.latitude],
-  zoom: INITIAL_VIEW_STATE.zoom,
-  pitch: INITIAL_VIEW_STATE.pitch,
-  bearing: INITIAL_VIEW_STATE.bearing,
-  maxZoom: INITIAL_VIEW_STATE.maxZoom,
-  centerCross: true,
-  baseLayer: new maptalks.TileLayer('tile', {
-    urlTemplate: `https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}${getDevicePixelRatio() > 1.5 ? '@2x' : ''}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg`
-  }),
-});
-```
+> `npm i maptalks.deckgl`
 
 ## use 使用
 
 ```js
-import { GeoJsonLayer, PolygonLayer } from '@deck.gl/layers';
-import * as maptalks from 'maptalks';
 import DeckGLLayer from 'maptalks.deckgl';
+import {GeoJsonLayer, PolygonLayer} from '@deck.gl/layers';
+import {LightingEffect, AmbientLight, _SunLight as SunLight} from '@deck.gl/core';
+import {scaleThreshold} from 'd3-scale';
+import * as maptalks from 'maptalks';
 
 const map = new maptalks.Map(this.container, {
   center: [-74.01194070150844, 40.70708981756565],
@@ -55,41 +42,68 @@ const map = new maptalks.Map(this.container, {
     'urlTemplate': 'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejh2N21nMzAxMmQzMnA5emRyN2lucW0ifQ.jSE-g2vsn48Ry928pqylcg'
     // 'subdomains': ['a', 'b', 'c', 'd']
   }),
-  devicePixelRatio: 1
+});
+// Source data GeoJSON
+const DATA_URL =
+  'https://raw.githubusercontent.com/visgl/deck.gl-data/master/examples/geojson/vancouver-blocks.json'; // eslint-disable-line
+
+export const COLOR_SCALE = scaleThreshold()
+  .domain([-0.6, -0.45, -0.3, -0.15, 0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.05, 1.2])
+  // @ts-ignore
+  .range([[65, 182, 196], [127, 205, 187], [199, 233, 180], [237, 248, 177], [255, 255, 204], [255, 237, 160], [254, 217, 118], [254, 178, 76], [253, 141, 60], [252, 78, 42], [227, 26, 28], [189, 0, 38], [128, 0, 38]]);
+
+const ambientLight = new AmbientLight({
+  color: [255, 255, 255],
+  intensity: 1.0
 });
 
-const DATA_URL =
-  'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/geojson/vancouver-blocks.json'; // eslint-disable-line
+const dirLight = new SunLight({
+  timestamp: Date.UTC(2019, 7, 1, 22),
+  color: [255, 255, 255],
+  intensity: 1.0,
+  _shadow: true
+});
+
 const landCover = [[[-123.0, 49.196], [-123.0, 49.324], [-123.306, 49.324], [-123.306, 49.196]]];
 
-const deckLayer = new DeckGLLayer('deck', {
-  'layers': [
+
+const lightingEffect = new LightingEffect({ambientLight, dirLight});
+lightingEffect.shadowColor = [0, 0, 0, 0.5];
+
+const props = {
+  layers: [
+    // only needed when using shadows - a plane for shadows to drop on
     new PolygonLayer({
-        id: 'ground',
-        data: landCover,
-        stroked: false,
-        getPolygon: f => f,
-        getFillColor: [0, 0, 0, 0]
-      }),
+      id: 'ground',
+      data: landCover,
+      stroked: false,
+      getPolygon: (f) => f,
+      getFillColor: [0, 0, 0, 0]
+    }),
     new GeoJsonLayer({
-        id: 'geojson',
-        data: DATA_URL,
-        opacity: 0.8,
-        stroked: false,
-        filled: true,
-        extruded: true,
-        wireframe: true,
-        getElevation: f => Math.sqrt(f.properties.valuePerSqm) * 10,
-        getFillColor: f => COLOR_SCALE(f.properties.growth),
-        getLineColor: [255, 255, 255],
-        pickable: true,
-        onHover: this._onHover
-      })
-  ]
-}, {
-  'animation': false,
-  'renderer': 'webgl'
-});
+      id: 'geojson',
+      data: DATA_URL,
+      opacity: 0.8,
+      stroked: false,
+      filled: true,
+      extruded: true,
+      wireframe: true,
+      getElevation: (f) => Math.sqrt(f.properties.valuePerSqm) * 10,
+      getFillColor: (f) => COLOR_SCALE(f.properties.growth),
+      getLineColor: [255, 255, 255],
+      pickable: true,
+    })
+  ],
+  effects: [lightingEffect]
+}
+const deckLayer = new DeckGLLayer('deck', props, {
+    animation: true,
+    forceRenderOnMoving: true,
+    forceRenderOnZooming: true,
+    renderStart: () => {
+      this.renderState?.update();
+    },
+  });
 
 map.addLayer(deckLayer);
 
@@ -97,6 +111,6 @@ map.addLayer(deckLayer);
 
 ## Examples
 
-[示例](https://sakitam-gis.github.io/maptalks.deckgl/#/index)
+[示例](https://sakitam-gis.github.io/maptalks.deckgl/)
 
-其他示例请查看 website 目录下源码。
+其他示例请查看 packages/gatsby/pages 目录下源码。

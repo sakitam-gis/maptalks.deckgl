@@ -1,7 +1,7 @@
 import { PolygonLayer } from '@deck.gl/layers';
 // @ts-ignore
 import { TileLayer } from '@deck.gl/geo-layers';
-import DeckGLLayer from '@salitam-gis/maptalks.deckgl';
+import DeckGLLayer from 'maptalks.deckgl';
 import Color from 'color';
 import Base from './base';
 

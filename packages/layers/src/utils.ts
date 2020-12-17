@@ -9,8 +9,9 @@ const createContext = function (canvas: HTMLCanvasElement, glOptions = {}) {
   function onContextCreationError (error: any) {
     console.log(error.statusMessage);
   }
-
-  canvas.addEventListener('webglcontextcreationerror', onContextCreationError, false);
+  if (canvas && canvas.addEventListener) {
+    canvas.addEventListener('webglcontextcreationerror', onContextCreationError, false);
+  }
   let gl = canvas.getContext('webgl2', glOptions);
   gl = gl || canvas.getContext('experimental-webgl2', glOptions);
   if (!gl) {
@@ -18,15 +19,21 @@ const createContext = function (canvas: HTMLCanvasElement, glOptions = {}) {
     gl = gl || canvas.getContext('experimental-webgl', glOptions);
   }
 
-  canvas.removeEventListener('webglcontextcreationerror', onContextCreationError, false);
+  if (canvas.removeEventListener) {
+    canvas.removeEventListener('webglcontextcreationerror', onContextCreationError, false);
+  }
   return gl;
 };
 
-// @ts-ignore
-const devicePixelRatio = window.devicePixelRatio || window.screen.deviceXDPI / window.screen.logicalXDPI;
+let devicePixelRatio = 1;
+// fixed: ssr render @link https://github.com/gatsbyjs/gatsby/issues/25507
+if (typeof window !== 'undefined') {
+  // @ts-ignore
+  devicePixelRatio = window.devicePixelRatio || window.screen.deviceXDPI / window.screen.logicalXDPI;
+}
 
 function getDevicePixelRatio () {
-  return Math.ceil(devicePixelRatio) || 1;
+  return devicePixelRatio;
 }
 
 export {

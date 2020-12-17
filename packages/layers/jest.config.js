@@ -4,7 +4,7 @@ module.exports = {
     "^.+\\.js$": "babel-jest",
     "^.+\\.(ts|tsx)$": "ts-jest"
   },
-  testEnvironment: "node",
+  testEnvironment: "jsdom",
   testRegex: "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
   moduleFileExtensions: [
     "ts", "tsx", "js", "jsx", "json", "node"
@@ -16,20 +16,20 @@ module.exports = {
     "/node_modules/",
     "/test/"
   ],
-  coverageThreshold: {
-    "global": {
-      "branches": 70,
-      "functions": 70,
-      "lines": 70,
-      "statements": 70
-    }
-  },
+  // coverageThreshold: {
+  //   "global": {
+  //     "branches": 0,
+  //     "functions": 0,
+  //     "lines": 0,
+  //     "statements": 0
+  //   }
+  // },
   collectCoverageFrom: [
-    "packages/*.{js,ts,tsx}"
+    "src/*.{js,ts,tsx}"
   ],
   clearMocks: true,
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'clover'],
+  coverageReporters: ['html', 'text', 'clover'],
   modulePathIgnorePatterns: ['dist'],
-  roots: ['<rootDir>/packages'],
+  roots: ['<rootDir>'],
 };

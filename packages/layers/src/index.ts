@@ -143,6 +143,7 @@ export interface IOptions {
 
   renderStart?: () => void;
   renderEnd?: () => void;
+  customCreateGLContext?: (canvas: HTMLCanvasElement, attrs: any) => WebGLRenderingContext | WebGL2RenderingContext;
 }
 
 export interface IProps {
@@ -349,7 +350,12 @@ export class Renderer extends renderer.CanvasLayerRenderer implements IRenderer 
         stencil : true
       };
       attributes.preserveDrawingBuffer = true;
-      this.gl = this.gl || createContext(this.canvas, attributes);
+      // fixed: jsdom env
+      if (layer.options?.customCreateGLContext) {
+        this.gl = this.gl || layer.options?.customCreateGLContext(this.canvas, attributes);
+      } else {
+        this.gl = this.gl || createContext(this.canvas, attributes);
+      }
     }
   }
 

@@ -3,7 +3,7 @@ import * as request from 'd3-request';
 import { AmbientLight, PointLight, LightingEffect } from '@deck.gl/core';
 // @ts-ignore
 import { HexagonLayer } from '@deck.gl/aggregation-layers';
-import DeckGLLayer from '@salitam-gis/maptalks.deckgl';
+import DeckGLLayer from 'maptalks.deckgl';
 import Base from "./base";
 import React from "react";
 
