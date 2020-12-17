@@ -1,0 +1,25 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "node bin/www",
+    "prod": "pm2 start bin/www"
+  },
+  "dependencies": {
+    "debug": "^4.3.1",
+    "pm2": "^4.5.1",
+    "fs-extra": "^9.0.1",
+    "koa": "^2.13.0",
+    "koa-router": "^10.0.0",
+    "koa-json": "^2.0.2",
+    "koa-onerror": "^4.1.0",
+    "koa-logger": "^3.2.1",
+    "koa-cors": "^0.0.16",
+    "koa-compress": "^5.0.1",
+    "koa-convert": "^2.0.0",
+    "koa-static": "^5.0.0"
+  },
+  "engines": {
+    "node": "12.x"
+  }
+}

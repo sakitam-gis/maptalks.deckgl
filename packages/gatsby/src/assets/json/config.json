@@ -68,12 +68,5 @@
     "chart_name": "vancouver-polygon",
     "chart_author": "sakitam-fdd",
     "chart_time": "2019.10.07"
-  },
-  {
-    "imgSrc": "./images/demo-thumb-geojson.jpg",
-    "link": "/vancouver-test",
-    "chart_name": "vancouver-test",
-    "chart_author": "sakitam-fdd",
-    "chart_time": "2019.10.10"
   }
 ]
