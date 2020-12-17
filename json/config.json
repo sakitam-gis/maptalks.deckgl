@@ -1,0 +1,72 @@
+[
+  {
+    "imgSrc": "./images/building.gif",
+    "link": "/building",
+    "chart_name": "Building",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./images/highway.jpg",
+    "link": "/highway",
+    "chart_name": "高速",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./images/hexagon.jpg",
+    "link": "/hexagon",
+    "chart_name": "hexagon",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./images/brushing.jpg",
+    "link": "/brushing",
+    "chart_name": "brushing",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./images/polygon.jpg",
+    "link": "/polygon",
+    "chart_name": "polygon",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./images/building.jpg",
+    "link": "/vector",
+    "chart_name": "vector",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./images/linelayer.jpg",
+    "link": "/linelayer",
+    "chart_name": "linelayer",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2018.12.23"
+  },
+  {
+    "imgSrc": "./images/demo-thumb-3d-tiles.jpg",
+    "link": "/3dtiles",
+    "chart_name": "3dtiles",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2019.10.07"
+  },
+  {
+    "imgSrc": "./images/demo-thumb-icon.jpg",
+    "link": "/icon-layer",
+    "chart_name": "icon-layer",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2019.10.07"
+  },
+  {
+    "imgSrc": "./images/demo-thumb-geojson.jpg",
+    "link": "/vancouver-polygon",
+    "chart_name": "vancouver-polygon",
+    "chart_author": "sakitam-fdd",
+    "chart_time": "2019.10.07"
+  }
+]
