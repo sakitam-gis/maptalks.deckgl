@@ -99,7 +99,7 @@ router.get('/mapbox-satellite/:z/:x/:y', async (ctx, next) => {
   if (fs.existsSync(uri)) {
     const d = fs.readFileSync(uri);
     ctx.status = 200;
-    ctx.type = 'webp';
+    ctx.type = 'image/webp';
     ctx.length = Buffer.byteLength(d);
     ctx.body = d;
   } else {
@@ -118,7 +118,7 @@ router.get('/mapbox-satellite/:z/:x/:y', async (ctx, next) => {
     });
 
     ctx.status = 200;
-    ctx.type = 'webp';
+    ctx.type = 'image/webp';
     ctx.length = Buffer.byteLength(data);
     ctx.body = data;
   }
